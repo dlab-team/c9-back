@@ -38,9 +38,6 @@ AppDataSource.initialize().then(async () => {
             })
     })
 
-    // setup express app here
-    // ...
-
     // start express server
     app.use(handleError)
     app.listen(process.env.PORT)
