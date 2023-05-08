@@ -1,5 +1,4 @@
 # c9-back
-Backend para C9
 
 Una vez descargado el Repo, se procede a realizar la instalación de las dependencias con:
 
@@ -34,3 +33,23 @@ Y finalmente, para correr el servidor, se procede a ejecutar:
 `npm run db:drop`
 
 * Además, a nivel de estructura, typeORM crea una Entity User, un UserController y las routes de User del CRUD básico, por lo que, esta información no se borrará aún para que, en caso de que les sirva, puedan generar el CRUD de la Entity Publication usando como guía las routes de User.
+
+* También, dentro del archivo .env se debe configurar la url del backend o directamente copiar esto en el .env:
+
+POSTGRES_HOST=localhost
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=postgres
+POSTGRES_PORT=5432
+
+NODE_ENV=development
+
+PORT=3000
+SECRET=security-key
+
+FRONT_URL=http://localhost:3001
+
+MAIL_HOST=
+MAIL_PORT=
+MAIL_USER=
+MAIL_PASS=
