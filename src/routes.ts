@@ -1,4 +1,5 @@
 import { UserController } from "./controller/UserController"
+import { PublicationController } from "./controller/PublicationController"
 import { body, param } from "express-validator"
 
 export const Routes = [{
@@ -32,5 +33,13 @@ export const Routes = [{
     action: "remove",
     validation: [
         param('id').isInt(),
+    ]
+}, {
+    method: "get",
+    route: "/publications/:slug",
+    controller: PublicationController,
+    action: "one",
+    validation: [
+        param('slug').isString(),
     ]
 }]
