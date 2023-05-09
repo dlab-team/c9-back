@@ -40,6 +40,9 @@ AppDataSource.initialize().then(async () => {
 
     // start express server
     app.use(handleError)
+    app.get('/', function (req, res){
+        res.send({ name: 'Innova XD', message: 'Funcionando sin problemas'})
+    })
     app.listen(process.env.PORT)
 
     console.log(`Express server has started on port ${process.env.PORT}.`)
