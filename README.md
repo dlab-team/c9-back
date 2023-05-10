@@ -8,7 +8,7 @@ Luego, se debe levantar el docker para que corra la base de datos:
 
 `docker compose up -d` o en ubuntu (linux) `sudo docker compose up -d`
 
-Ya con la base de datos corriendo en la imagen de docker, se procede a generar las migraciones:
+Ya con la base de datos corriendo en la imagen de docker, se procede a generar las migraciones SOLO SI ES NECESARIO (SI YA EXISTEN MIGRACIONES PASAR AL SIGUIENTE PASO):
 
 `npm run migration:generate`
 
@@ -36,20 +36,20 @@ Y finalmente, para correr el servidor, se procede a ejecutar:
 
 * También, dentro del archivo .env se debe configurar la url del backend o directamente copiar esto en el .env:
 
-POSTGRES_HOST=localhost
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=postgres
-POSTGRES_PORT=5432
+- POSTGRES_HOST=localhost
+- POSTGRES_USER=postgres
+- POSTGRES_PASSWORD=postgres
+- POSTGRES_DB=postgres
+- POSTGRES_PORT=5432
 
-NODE_ENV=development
+- NODE_ENV=development
 
-PORT=3000
-SECRET=security-key
+- PORT=3000
+- SECRET=security-key
 
-FRONT_URL=http://localhost:3001
+- FRONT_URL=http://localhost:3001
 
-MAIL_HOST=
-MAIL_PORT=
-MAIL_USER=
-MAIL_PASS=
+- MAIL_HOST=
+- MAIL_PORT=
+- MAIL_USER=
+- MAIL_PASS=
