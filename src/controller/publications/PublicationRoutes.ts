@@ -17,4 +17,16 @@ export const publicationRoutes = [{
     controller: PublicationController,
     action: 'all',
     validation: [],
-  },]
+  },
+	{
+		method: 'put',
+		route: '/publications/:slug',
+		controller: PublicationController,
+		action: 'update',
+		validation: [
+			param('slug').isString(),
+			body('name').isString(),
+			body('initialContent').isString(),
+			body('finalContent').isString(),
+		],
+	}]
