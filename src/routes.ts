@@ -39,10 +39,11 @@ export const Routes = [
 	},
 	{
 		method: 'put',
-		route: '/publications/:slug',
+		route: '/publications/:id',
 		controller: PublicationController,
 		action: 'update',
 		validation: [
+			param('id').isInt(),
 			body('name').isString(),
 			body('slug').isString(),
 			body('initialContent').isString(),

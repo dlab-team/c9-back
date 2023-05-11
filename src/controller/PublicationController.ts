@@ -13,13 +13,14 @@ export class PublicationController {
     }
 
     async update(request: Request, response: Response, next: NextFunction) {
-        const slug = request.params.slug;
-        const publication = await this.publicationRepository.findOne({ where: { slug } });
-        if (!publication) { return "no se consiguió la publicación"; }
-        const { name, initialContent, finalContent } = request.body;
-        publication.name = name;
+        const id = request.params.id;
+        const publication = await this.publicationRepository.findOne({ where: { id } });
+        if (!publication) { return `No se encontró publicación con id ${id}`; }
+        const { slug, initialContent, finalContent } = request.body;
+        publication.slug = slug;
         publication.initialContent = initialContent;
         publication.finalContent = finalContent;
-        return this.publicationRepository.save(publication);
+        await this.publicationRepository.update(id, publication);
+        return publication;
     }
 }
