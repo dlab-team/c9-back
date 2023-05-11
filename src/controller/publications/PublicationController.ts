@@ -50,4 +50,16 @@ export class PublicationController {
 
     return "La Publicación se ha borrado correctamente";
   }
+
+  async update(request: Request, response: Response, next: NextFunction) {
+    const slug = request.params.slug;
+    const publication = await this.publicationRepository.findOne({ where: { slug } });
+    if (!publication) { return `No se encontró publicación`; }
+    const { name, initialContent, finalContent } = request.body;
+    publication.name = name;
+    publication.initialContent = initialContent;
+    publication.finalContent = finalContent;
+    await this.publicationRepository.save(publication);
+    return publication;
+  }
 }
