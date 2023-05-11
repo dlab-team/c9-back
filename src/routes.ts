@@ -1,5 +1,6 @@
 import { UserController } from './controller/UserController';
 import { body, param } from 'express-validator';
+import { PublicationController } from './controller/PublicationController';
 
 export const Routes = [
 	{
