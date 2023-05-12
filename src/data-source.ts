@@ -1,9 +1,7 @@
 require('dotenv').config();
 import "reflect-metadata"
 import { DataSource, DataSourceOptions } from "typeorm"
-import { User } from "./entity/User"
 import { SeederOptions } from "typeorm-extension";
-import { Publication } from "./entity/Publication";
 import { MainSeeder } from "./seeds/MainSeeder";
 
 
@@ -17,7 +15,7 @@ const options: DataSourceOptions & SeederOptions = {
     synchronize: true,
     logging: false,
     entities: [`${__dirname}/**/entity/*.ts`],
-    migrations: [`${__dirname}/**/migrations/*.ts`],
+    migrations: [`${__dirname}/**/migration/*.ts`],
     seeds: [MainSeeder],
     subscribers: [],
 }
