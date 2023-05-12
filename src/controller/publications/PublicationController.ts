@@ -26,7 +26,7 @@ export class PublicationController {
     });
 
     if (!publicaction) {
-      return "No se consiguió la publicación";
+      return 'No se consiguió la publicación';
     }
 
     return publicaction;
@@ -40,21 +40,27 @@ export class PublicationController {
   async remove(request: Request, response: Response, next: NextFunction) {
     const slug = request.params.slug;
 
-    const publicationToRemove = await this.publicationRepository.findOne({ where: { slug } });
+    const publicationToRemove = await this.publicationRepository.findOne({
+      where: { slug },
+    });
 
     if (!publicationToRemove) {
-      return "La Publicación que se intenta borrar no existe";
+      return 'La Publicación que se intenta borrar no existe';
     }
 
     await this.publicationRepository.remove(publicationToRemove);
 
-    return "La Publicación se ha borrado correctamente";
+    return 'La Publicación se ha borrado correctamente';
   }
 
   async update(request: Request, response: Response, next: NextFunction) {
     const slug = request.params.slug;
-    const publication = await this.publicationRepository.findOne({ where: { slug } });
-    if (!publication) { return `No se encontró publicación`; }
+    const publication = await this.publicationRepository.findOne({
+      where: { slug },
+    });
+    if (!publication) {
+      return `No se encontró publicación`;
+    }
     const { name, initialContent, finalContent } = request.body;
     publication.name = name;
     publication.initialContent = initialContent;

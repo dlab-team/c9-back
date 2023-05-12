@@ -1,5 +1,6 @@
 require("dotenv").config();
 import * as express from "express";
+import cors = require("cors");
 import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 import { AppDataSource } from "./data-source";
@@ -16,6 +17,7 @@ AppDataSource.initialize()
   .then(async () => {
     // create express app
     const app = express();
+    app.use(cors());
     app.use(morgan("tiny"));
     app.use(bodyParser.json());
 
