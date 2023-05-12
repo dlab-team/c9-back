@@ -8,6 +8,8 @@ import { Routes } from "./routes";
 import { User } from "./entity/User";
 import * as morgan from "morgan";
 import { validationResult } from "express-validator";
+import * as swaggerUi from "swagger-ui-express";
+import swaggerSetup from "./docs/swagger";
 
 function handleError(err, req, res, next) {
   res.status(err.statusCode || 500).send({ message: err.message });
@@ -43,9 +45,9 @@ AppDataSource.initialize()
           }
         }
       );
-    });
+    }); // start express server
 
-    // start express server
+    app.use("/documentation", swaggerUi.serve, swaggerUi.setup(swaggerSetup));
     app.use(handleError);
     app.listen(process.env.PORT);
 
