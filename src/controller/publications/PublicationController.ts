@@ -33,8 +33,22 @@ export class PublicationController {
   }
 
   async all(request: Request, response: Response, next: NextFunction) {
-    const publications = await this.publicationRepository.find();
-    return publications;
+    const publications = await this.publicationRepository.find({
+      relations: {
+        user: true,
+        questions: true
+      },
+      select: {
+        user: {
+          name: true,
+        },
+        questions: {
+          question: true,
+          answer: true,
+        }
+      }
+    });
+    return publications
   }
 
   async remove(request: Request, response: Response, next: NextFunction) {
