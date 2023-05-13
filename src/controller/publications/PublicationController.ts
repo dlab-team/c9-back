@@ -1,6 +1,7 @@
 import { AppDataSource } from '../../data-source';
 import { NextFunction, Request, Response } from 'express';
 import { Publication } from '../../entity/Publication';
+import { asDTO, asDTOs } from './PublicationDTO';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -13,23 +14,28 @@ export class PublicationController {
       initialContent,
       finalContent,
     });
-
     const results = await this.publicationRepository.save(publication);
     return results;
   }
 
   async one(request: Request, response: Response, next: NextFunction) {
     const slug = request.params.slug;
-
-    const publicaction = await this.publicationRepository.findOne({
+    const publication = await this.publicationRepository.findOne({
       where: { slug },
+      relations: {
+        user: true,
+        questions: true
+      },
+      select: {
+        user: {
+          name: true,
+        },
+      }
     });
-
-    if (!publicaction) {
+    if (!publication) {
       return 'No se consiguió la publicación';
     }
-
-    return publicaction;
+    return asDTO(publication);
   }
 
   async all(request: Request, response: Response, next: NextFunction) {
@@ -48,22 +54,18 @@ export class PublicationController {
         }
       }
     });
-    return publications
+    return asDTOs(publications);
   }
 
   async remove(request: Request, response: Response, next: NextFunction) {
     const slug = request.params.slug;
-
     const publicationToRemove = await this.publicationRepository.findOne({
       where: { slug },
     });
-
     if (!publicationToRemove) {
       return 'La Publicación que se intenta borrar no existe';
     }
-
     await this.publicationRepository.remove(publicationToRemove);
-
     return 'La Publicación se ha borrado correctamente';
   }
 
