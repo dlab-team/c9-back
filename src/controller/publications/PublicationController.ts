@@ -13,22 +13,27 @@ export class PublicationController {
       initialContent,
       finalContent,
     });
-
     const results = await this.publicationRepository.save(publication);
     return results;
   }
 
   async one(request: Request, response: Response, next: NextFunction) {
     const slug = request.params.slug;
-
     const publicaction = await this.publicationRepository.findOne({
       where: { slug },
+      relations: {
+        user: true,
+        questions: true
+      },
+      select: {
+        user: {
+          name: true,
+        },
+      }
     });
-
     if (!publicaction) {
       return 'No se consiguió la publicación';
     }
-
     return publicaction;
   }
 
@@ -48,22 +53,18 @@ export class PublicationController {
         }
       }
     });
-    return publications
+    return publications;
   }
 
   async remove(request: Request, response: Response, next: NextFunction) {
     const slug = request.params.slug;
-
     const publicationToRemove = await this.publicationRepository.findOne({
       where: { slug },
     });
-
     if (!publicationToRemove) {
       return 'La Publicación que se intenta borrar no existe';
     }
-
     await this.publicationRepository.remove(publicationToRemove);
-
     return 'La Publicación se ha borrado correctamente';
   }
 
