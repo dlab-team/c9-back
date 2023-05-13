@@ -18,3 +18,8 @@ export function asDTO(response: any): { publication: any; } {
    };
    return { publication };
 }
+
+export function asDTOs(response: any[]): { publications: any[]; } {
+   const publications = response.map((response) => asDTO(response).publication);
+   return { publications };
+}

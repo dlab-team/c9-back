@@ -1,7 +1,7 @@
 import { AppDataSource } from '../../data-source';
 import { NextFunction, Request, Response } from 'express';
 import { Publication } from '../../entity/Publication';
-import { asDTO } from './PublicationDTO';
+import { asDTO, asDTOs } from './PublicationDTO';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -54,7 +54,7 @@ export class PublicationController {
         }
       }
     });
-    return publications;
+    return asDTOs(publications);
   }
 
   async remove(request: Request, response: Response, next: NextFunction) {
