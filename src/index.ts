@@ -23,6 +23,13 @@ AppDataSource.initialize()
     app.use(morgan("tiny"));
     app.use(bodyParser.json());
 
+    app.get('/', function (req: Request, res: Response) {
+      res.send({
+        Proyect: 'Innova XD',
+        Development: "Incubadora Desafío Latam Célula c9 junto a Microsoft y El Mercurio"
+      })
+    })
+
     // register express routes from defined application routes
     Routes.forEach((route) => {
       (app as any)[route.method](

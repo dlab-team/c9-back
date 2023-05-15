@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Publication } from "./Publication"
 
 @Entity()
 export class User {
@@ -6,13 +7,15 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
-    firstName: string
+    @Column({ unique: true})
+    email: string
 
     @Column()
-    lastName: string
+    name: string
 
     @Column()
-    age: number
+    password: string
 
+    @OneToMany(() => Publication, publication => publication.user)
+    publications: Publication[]
 }
