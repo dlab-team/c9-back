@@ -12,21 +12,29 @@ export class PublicationController {
       where: { slug },
       relations: {
         user: true,
-        questions: true
+        questions: true,
       },
       select: {
         user: {
           name: true,
         },
-      }
+      },
     });
     if (!publication) {
       response.status(400).json({ message: "La publicación que se intenta buscar no existe" });
       return;
     }
-    return asDTO(publication);
+    const publicationDTO = asDTO(publication);
+    return publicationDTO;
   }
 
+  /**
+   * Obtiene todas las publicaciones de la base de datos.
+   * @param request - La solicitud HTTP que se está procesando.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns Un arreglo de objetos DTO que representan las publicaciones.
+   */
   async all(request: Request, response: Response, next: NextFunction) {
     try {
       const publications = await this.publicationRepository.find({
@@ -48,9 +56,16 @@ export class PublicationController {
     } catch (error) {
       response.status(400).json({ message: "Ha ocurrido un error creando la Publicación", error: error.detail })
     }
-    
   };
 
+      /**
+   * Crea y guarda una nueva publicación en la base de datos.
+   * @param request - La solicitud HTTP que contiene los datos de la publicación.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns La publicación creada.
+   */
+  
   async save(request: Request, response: Response, next: NextFunction) {
     try {
       const { name, slug, initialContent, finalContent, category, images, user_id } = request.body;
@@ -71,7 +86,17 @@ export class PublicationController {
       response.status(400).json({ message: "Ha ocurrido un error creando la Publicación", error: error.detail })
     }
   };
+  
 
+
+  /**
+   * Actualiza una publicación existente en la base de datos.
+   * @param request - La solicitud HTTP que se está procesando.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns La publicación actualizada.
+   */
+  
   async update(request: Request, response: Response, next: NextFunction) {
     try {
       const busquedaSlug = request.params.slug;
@@ -103,9 +128,15 @@ export class PublicationController {
     } catch (error) {
       response.status(400).json({ message: "Ha ocurrido un error actualizando la Publicación", error: error.detail })
     }
-
   }
 
+  /**
+   * Elimina una publicación de la base de datos.
+   * @param request - La solicitud HTTP que se está procesando.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns Un mensaje que indica si la publicación se eliminó correctamente o no.
+   */
   async remove(request: Request, response: Response, next: NextFunction) {
     try {
       const slug = request.params.slug;
@@ -122,5 +153,4 @@ export class PublicationController {
       response.status(400).json({ message: "Ha ocurrido un error eliminando una pregunta con su respuesta", error: error.detail })
     }
   };
-
 }
