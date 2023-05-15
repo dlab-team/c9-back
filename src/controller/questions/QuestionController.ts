@@ -100,7 +100,8 @@ export class QuestionController {
                 where: { id },
             });
             if (!questionUpdate) {
-                return response.json({ message: "No se encontró la pregunta a actualizar"})
+                response.status(400).json({ message: "No se encontró la pregunta a actualizar"});
+                return;
             }
             const { question, answer } = request.body;
             questionUpdate.question = question;
@@ -108,7 +109,7 @@ export class QuestionController {
             await this.questionRepository.save(questionUpdate);
             return questionUpdate;
         } catch (error) {
-             response.json({ message: "Ha ocurrido un error actualizando una pregunta con su respuesta", error: error.detail })
+            response.json({ message: "Ha ocurrido un error actualizando una pregunta con su respuesta", error: error.detail })
         }
 
     }
