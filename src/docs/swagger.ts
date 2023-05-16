@@ -4,7 +4,7 @@ import { OAS3Options, OAS3Definition } from "swagger-jsdoc";
 const swaggerDefinition: OAS3Definition = {
   openapi: "3.0.0",
   info: {
-    title: "C9 API",
+    title: "PROYECO C9-INCUBADORA DESAFIO LATAM",
     version: "1.0.0",
     description: "C9 API",
   },
@@ -14,7 +14,8 @@ const swaggerDefinition: OAS3Definition = {
       description: "Development server",
     },
   ],
-  /* components: {
+  components: {
+    /* {
         securitySchemes: {
             bearerAuth: {
                 type: "http",
@@ -23,45 +24,77 @@ const swaggerDefinition: OAS3Definition = {
             },
         },}
 */
-  schemas: {
-    User: {
-      type: "object",
-      properties: {
-        id: {
-          type: "integer",
-          format: "int64",
-        },
-        firstName: {
-          type: "string",
-        },
-        lastName: {
-          type: "string",
-        },
-        age: {
-          type: "integer",
-          format: "int32",
+    schemas: {
+      Users: {
+        type: "object",
+        required: ["firstName", "lastName", "age"],
+        properties: {
+          id: {
+            type: "integer",
+            format: "int64",
+          },
+          firstName: {
+            type: "string",
+          },
+          lastName: {
+            type: "string",
+          },
+          age: {
+            type: "integer",
+            format: "int32",
+          },
         },
       },
-    },
-    Publication: {
-      type: "object",
-      required: ["name", "initialContent", "finalContent", "slug"],
-      properties: {
-        id: {
-          type: "integer",
-          format: "int64",
+      Publications: {
+        type: "object",
+        required: ["name", "initialContent", "finalContent", "slug"],
+        properties: {
+          id: {
+            type: "integer",
+            format: "int64",
+          },
+          name: {
+            type: "string",
+          },
+          slug: {
+            type: "string",
+          },
+          initialContent: {
+            type: "string",
+          },
+          finalContent: {
+            type: "string",
+          },
+          category: {
+            type: "string",
+          },
+          images: {
+            type: "array",
+          },
+          user_id: {
+            type: "integer",
+            format: "int64",
+          },
         },
-        name: {
-          type: "string",
-        },
-        slug: {
-          type: "string",
-        },
-        initialContent: {
-          type: "string",
-        },
-        finalContent: {
-          type: "string",
+      },
+      Questions: {
+        type: "object",
+        required: ["question", "answer", "publication_id"],
+        properties: {
+          id: {
+            type: "integer",
+            format: "int64",
+          },
+          question: {
+            type: "string",
+          },
+          answer: {
+            type: "string",
+          },
+          publication_id: {
+            type: "integer",
+            format: "int64",
+          },
         },
       },
     },
@@ -70,7 +103,11 @@ const swaggerDefinition: OAS3Definition = {
 
 const swaggerOptions: OAS3Options = {
   swaggerDefinition,
-  apis: ["./src/routes.ts"],
+  apis: [
+    "./src/controller/publications/*.ts",
+    "./src/controller/users/*.ts",
+    "./src/controller/questions/*.ts",
+  ],
 };
 
 export default swaggerJSDoc(swaggerOptions);

@@ -1,6 +1,6 @@
 require("dotenv").config();
 import * as express from "express";
-import cors = require("cors");
+import * as cors from "cors";
 import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 import { AppDataSource } from "./data-source";
@@ -9,7 +9,7 @@ import { User } from "./entity/User";
 import * as morgan from "morgan";
 import { validationResult } from "express-validator";
 import * as swaggerUi from "swagger-ui-express";
-import swaggerSetup from "./docs/swagger";
+import swaggerDoc from "./docs/swagger";
 
 function handleError(err, req, res, next) {
   res.status(err.statusCode || 500).send({ message: err.message });
@@ -23,12 +23,13 @@ AppDataSource.initialize()
     app.use(morgan("tiny"));
     app.use(bodyParser.json());
 
-    app.get('/', function (req: Request, res: Response) {
+    app.get("/", function (req: Request, res: Response) {
       res.send({
-        Proyect: 'Innova XD',
-        Development: "Incubadora Desafío Latam Célula c9 junto a Microsoft y El Mercurio"
-      })
-    })
+        Proyect: "Innova XD",
+        Development:
+          "Incubadora Desafío Latam Célula c9 junto a Microsoft y El Mercurio",
+      });
+    });
 
     // register express routes from defined application routes
     Routes.forEach((route) => {
@@ -54,7 +55,7 @@ AppDataSource.initialize()
       );
     }); // start express server
 
-    app.use("/documentation", swaggerUi.serve, swaggerUi.setup(swaggerSetup));
+    app.use("/documentation", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
     app.use(handleError);
     app.listen(process.env.PORT);
 
