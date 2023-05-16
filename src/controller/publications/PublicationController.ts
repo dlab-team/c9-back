@@ -7,25 +7,38 @@ export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
 
   async one(request: Request, response: Response, next: NextFunction) {
-    const slug = request.params.slug;
-    const publication = await this.publicationRepository.findOne({
-      where: { slug },
-      relations: {
-        user: true,
-        questions: true,
-      },
-      select: {
-        user: {
-          name: true,
+    try {
+      const slug = request.params.slug;
+      const publication = await this.publicationRepository.findOne({
+        where: { slug },
+        relations: {
+          user: true,
+          questions: true,
         },
-      },
-    });
-    if (!publication) {
-      response.status(400).json({ message: "La publicación que se intenta buscar no existe" });
-      return;
+        select: {
+          user: {
+            name: true,
+          },
+        },
+      });
+      if (!publication) {
+        return {
+          statusCode: 404,
+          data: { message: "La publicación que se intenta buscar no existe" }
+        };
+      }
+      const publicationDTO = asDTO(publication);
+      return {
+        statusCode: 200,
+        data: publicationDTO
+      };
+    } catch (error) {
+      return {
+        statusCode: 400,
+        data: { message: "Ha ocurrido un error trayendo la publicación", error: error.detail }
+      };
     }
-    const publicationDTO = asDTO(publication);
-    return publicationDTO;
+
   }
 
   /**
@@ -52,20 +65,26 @@ export class PublicationController {
           }
         }
       });
-      return asDTOs(publications);
+      const publicationDTOs = asDTOs(publications)
+      return {
+        statusCode: 200,
+        data: publicationDTOs
+      };      
     } catch (error) {
-      response.status(400).json({ message: "Ha ocurrido un error creando la Publicación", error: error.detail })
+      return {
+        statusCode: 400,
+        data: { message: "Ha ocurrido un error obteniendo las Publicaciónes", error: error.detail }
+      };
     }
   };
 
-      /**
-   * Crea y guarda una nueva publicación en la base de datos.
-   * @param request - La solicitud HTTP que contiene los datos de la publicación.
-   * @param response - La respuesta HTTP que se enviará al cliente.
-   * @param next - La función que se llamará después de que se complete la operación.
-   * @returns La publicación creada.
-   */
-  
+  /**
+* Crea y guarda una nueva publicación en la base de datos.
+* @param request - La solicitud HTTP que contiene los datos de la publicación.
+* @param response - La respuesta HTTP que se enviará al cliente.
+* @param next - La función que se llamará después de que se complete la operación.
+* @returns La publicación creada.
+*/
   async save(request: Request, response: Response, next: NextFunction) {
     try {
       const { name, slug, initialContent, finalContent, category, images, user_id } = request.body;
@@ -81,13 +100,17 @@ export class PublicationController {
         }
       });
       const result = await this.publicationRepository.save(publication);
-      return result;
+      return {
+        statusCode: 201,
+        data: result
+      }; 
     } catch (error) {
-      response.status(400).json({ message: "Ha ocurrido un error creando la Publicación", error: error.detail })
+      return {
+        statusCode: 400,
+        data: { message: "Ha ocurrido un error creando una nueva Publicación", error: error.detail }
+      };
     }
   };
-  
-
 
   /**
    * Actualiza una publicación existente en la base de datos.
@@ -96,7 +119,6 @@ export class PublicationController {
    * @param next - La función que se llamará después de que se complete la operación.
    * @returns La publicación actualizada.
    */
-  
   async update(request: Request, response: Response, next: NextFunction) {
     try {
       const busquedaSlug = request.params.slug;
@@ -112,8 +134,10 @@ export class PublicationController {
         }
       });
       if (!publication) {
-        response.status(400).json({ message: "La publicación que se intenta actualizar no existe" });
-        return;
+        return {
+          statusCode: 400,
+          data: { message: "La publicación que se intenta actualizar no existe" }
+        };
       }
       const { name, slug, initialContent, finalContent, category, images, user_id } = request.body;
       publication.name = name;
@@ -124,9 +148,16 @@ export class PublicationController {
       publication.images = images;
       publication.user.id = user_id;
       await this.publicationRepository.save(publication);
-      return publication;
+      return {
+        statusCode: 200,
+        data: publication
+      };
     } catch (error) {
-      response.status(400).json({ message: "Ha ocurrido un error actualizando la Publicación", error: error.detail })
+      return {
+        statusCode: 400,
+        data: { message: "Ha ocurrido un error actualizando la Publicación", error: error.detail }
+      };
+      
     }
   }
 
@@ -142,15 +173,28 @@ export class PublicationController {
       const slug = request.params.slug;
       const publicationToRemove = await this.publicationRepository.findOne({
         where: { slug },
+        relations: {
+          questions: {
+            publication: true
+          }
+        }
       });
       if (!publicationToRemove) {
-        response.status(400).json({ message: "La publicación que se intenta borrar no existe" });
-        return;
+        return {
+          statusCode: 404,
+          data: { message: "La publicación que se intenta borrar no existe" }
+        };
       }
       await this.publicationRepository.remove(publicationToRemove);
-      response.status(200).json({ message: 'La Publicación se ha borrado correctamente' })
+      return {
+        statusCode: 200,
+        data: { message: 'La Publicación se ha borrado correctamente' }
+      };
     } catch (error) {
-      response.status(400).json({ message: "Ha ocurrido un error eliminando una pregunta con su respuesta", error: error.detail })
+      return {
+        statusCode: 400,
+        data: { message: "Ha ocurrido un error eliminando una pregunta con su respuesta", error: error.detail }
+      };
     }
   };
 }

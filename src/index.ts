@@ -47,7 +47,11 @@ AppDataSource.initialize()
               res,
               next
             );
-            res.json(result);
+            if (result.statusCode && result.data) {
+              const { statusCode, data } = result;
+              return res.status(statusCode).json(data);
+            }
+            return res.tatus(200).json(result)
           } catch (error) {
             next(error);
           }

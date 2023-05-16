@@ -8,123 +8,123 @@ export class QuestionSeeder implements Seeder{
         const questionRepository = dataSource.getRepository(Question)
 
         const questionData = [{
-            question : '¿Qué es un saurópodo gigante y cuál es su característica principal?',
-            answer : 'Los saurópodos gigantes son un grupo de dinosaurios herbívoros de cuello largo y cola larga que vivieron en la Tierra hace millones de años. Su característica principal es su gran tamaño, que puede alcanzar más de 30 metros de largo y pesar hasta 100 toneladas.',
+            question : '¿Cuál es la importancia de los bosques de algas en la Patagonia chilena en términos de captura de carbono?',
+            answer : 'Los bosques de algas en la Patagonia chilena son uno de los ecosistemas que captura más carbono en el mundo, junto con la Amazonía. Tienen un poder capturador de carbono incluso mayor que el del Amazonas.',
             publication : {
                 id: 1
             }
         }, {
-            question : '¿Dónde se encontraron los restos fósiles del nuevo dinosaurio y cuántos años se estima que tiene?',
-            answer : 'Los restos fósiles del nuevo dinosaurio se encontraron en la Patagonia argentina. Se estima que el dinosaurio vivió hace unos 90 millones de años.',
+            question : '¿Cuál es la función de los bosques de algas en el ecosistema marino de la Patagonia?',
+            answer : 'Los bosques de algas en la Patagonia chilena mantienen la estructura de las costas, regulan el pH de las aguas y proporcionan un lugar de refugio, desove y alimento a invertebrados y peces. Son vitales para muchas especies, como jureles, sardinas, chungungos, huillines, locos, erizos y pulpos.',
             publication : {
                 id: 1
             }
         }, {
-            question : '¿Qué se ha lanzado por parte de la empresa desarrolladora del videojuego más popular del momento?',
-            answer : 'La empresa desarrolladora del videojuego más popular del momento ha lanzado una nueva versión del juego con más niveles y personajes.',
+            question : '¿Qué porcentaje de los encuestados considera que el desarrollo científico y tecnológico ha aportado al desarrollo de Chile en los últimos dos años?',
+            answer : 'Según la encuesta, un 74,2% de los encuestados cree que el desarrollo científico y tecnológico ha sido un aporte al desarrollo de Chile en los últimos dos años.',
             publication : {
                 id: 2
             }
         }, {
-            question : '¿Qué impacto ha tenido el lanzamiento de esta nueva versión en los fanáticos del videojuego?',
-            answer : 'Los fanáticos del videojuego están emocionados por las nuevas características y desafíos que les esperan en la nueva versión del juego, lo que sugiere un impacto positivo en su entusiasmo y compromiso con el juego.',
+            question : '¿Cuál es la percepción de los encuestados sobre la dependencia de la ciencia y la fe?',
+            answer : 'Según la encuesta, un 61,4% de los encuestados está de acuerdo con la frase "dependemos demasiado de la ciencia y no suficiente de la fe".',
             publication : {
                 id: 2
             }
         }, {
  
-            question : '¿Qué tipo de atracciones ofrece el nuevo parque temático de dinosaurios?',
-            answer : 'El nuevo parque temático de dinosaurios ofrece una réplica de un hábitat jurásico, dinosaurios robóticos en acción, oportunidades para aprender sobre la historia y la ciencia de los dinosaurios, y actividades para niños como excavaciones de fósiles y montañas rusas temáticas.',
+            question : '¿Cuál es la finalidad del pangenoma humano de referencia según el director del Programa de Referencia del Genoma Humano?',
+            answer : 'Según el director del Programa de Referencia del Genoma Humano, el pangenoma de alta calidad permitirá a los científicos y profesionales sanitarios comprender mejor cómo influyen las variantes genómicas en la salud y la enfermedad, avanzando hacia un futuro en el que la medicina genómica beneficie a todos.',
             publication : {
                 id: 3
             }
         }, {
-            question : '¿Qué puede esperar un visitante al parque temático de dinosaurios en términos de experiencia educativa y de entretenimiento?',
-            answer : 'Un visitante al parque temático de dinosaurios puede esperar una experiencia educativa y de entretenimiento emocionante y atractiva, que incluye la oportunidad de aprender sobre la historia y la ciencia de los dinosaurios, interactuar con dinosaurios robóticos y disfrutar de atracciones temáticas para niños y adultos.',
+            question : '¿Cuál es la proporción de las secuencias genómicas utilizadas en el primer borrador del pangenoma humano según su origen étnico?',
+            answer : 'Según el texto, el 51% de las secuencias genómicas utilizadas en el primer borrador del pangenoma humano son de origen africano, el 34% americano, el 13% asiático y solo un 2% europeo.',
             publication : {
                 id: 3
             }
         }, {
-            question : '¿Qué hace el robot creado por el grupo de estudiantes de ingeniería?',
-            answer : 'El robot creado por el grupo de estudiantes de ingeniería está programado para ayudar a personas mayores en sus tareas diarias, incluyendo la limpieza del hogar, la movilidad y la carga de objetos pesados.',
+            question : '¿Cuáles son las características principales de la pintura desarrollada por el Grupo de Investigación de Nanoóptica de la Universidad Central de Florida?',
+            answer : 'La pintura desarrollada se basa en el uso de nanoestructuras de aluminio y óxido de aluminio para manipular la luz de formas que no pueden ser replicadas con pigmentaciones convencionales. Estas nanoestructuras permiten que la pintura sea multicolor y que con una sola capa se pueda colorear cualquier superficie.',
             publication : {
                 id: 4
             }
         }, {
-            question : '¿Cómo ha sido recibido el invento por la comunidad de personas mayores y cuál es el siguiente paso para el robot?',
-            answer : 'El invento ha sido muy bien recibido por la comunidad de personas mayores, lo que sugiere que hay una demanda real para este tipo de tecnología. El siguiente paso es la comercialización del robot, que se espera que esté disponible en el mercado en un futuro próximo.',
+            question : '¿Cuáles son las ventajas medioambientales y económicas de la pintura desarrollada por el equipo de la Universidad Central de Florida?',
+            answer : 'La pintura desarrollada es más respetuosa con el medio ambiente, ya que utiliza materiales no tóxicos y de bajo costo, como el aluminio y el óxido de aluminio. Además, la pintura es más ligera, lo que reduce la cantidad necesaria para cubrir una superficie, y más económica en comparación con las pinturas tradicionales.',
             publication : {
                 id: 4
             }
         }, {
-            question : '¿Qué ha anunciado la NASA recientemente?',
-            answer : 'La NASA ha anunciado el descubrimiento de un nuevo planeta fuera del sistema solar llamado Kepler-452b.',
+            question : '¿En qué consiste el tratamiento de donación mitocondrial (MDT) utilizado en el Reino Unido y cuál es su objetivo principal?',
+            answer : 'El tratamiento de donación mitocondrial (MDT) utiliza tejido de los óvulos de mujeres donantes sanas para crear embriones en Fecundación In Vitro (FIV) libres de mutaciones dañinas que portan las madres y que podrían transmitir a sus hijos. El objetivo principal es ayudar a las mujeres con mitocondrias mutadas a tener bebés sin el riesgo de transmitir trastornos genéticos.',
             publication : {
                 id: 5
             }
         }, {
-            question : '¿Qué se sabe hasta ahora sobre el nuevo planeta y qué posibilidades existen sobre su habitabilidad?',
-            answer : 'El nuevo planeta Kepler-452b tiene un tamaño similar al de la Tierra y se encuentra a unos 1400 años luz de distancia. Los científicos creen que podría tener condiciones similares a las de nuestro planeta y estar en la zona habitable de su estrella, lo que sugiere que podría ser un candidato para la habitabilidad.',
+            question : '¿Cuál es la proporción de ADN proveniente de cada progenitor en una guagua nacida a través del tratamiento de donación mitocondrial (MDT)?',
+            answer : 'La guagua resultante tiene ADN de la madre y el padre, pero también contiene una pequeña cantidad de material genético (alrededor de 37 genes) proveniente de la donante. Aunque hay ADN de una donante, el 99,8% del ADN del recién nacido procede de la madre y el padre.',
             publication : {
                 id: 5
             }
         }, {
-            question : '¿Qué descubrieron los astrónomos y cómo se llama el planeta?',
-            answer : 'Los astrónomos descubrieron un nuevo exoplaneta llamado Kepler-438b que podría ser habitable.',
+            question : '¿En qué consiste el tratamiento de donación mitocondrial (MDT) y cuál es su objetivo principal?',
+            answer : 'El tratamiento de donación mitocondrial (MDT) utiliza tejido de los óvulos de mujeres donantes sanas para crear embriones libres de mutaciones dañinas que portan las madres y que podrían transmitirse a sus hijos. El objetivo principal es evitar que los niños hereden enfermedades incurables asociadas a trastornos mitocondriales.',
             publication : {
                 id: 6
             }
         }, {
-            question : '¿Qué características tiene Kepler-438b que lo hacen un posible candidato para la habitabilidad?',
-            answer : 'Kepler-438b tiene una masa similar a la de la Tierra, y los científicos creen que su atmósfera podría ser similar a la de nuestro planeta, lo que lo convierte en un posible candidato para la habitabilidad y la presencia de vida.',
+            question : '¿Cómo se lleva a cabo el procedimiento de donación mitocondrial (MDT) en el Centro de Fertilidad de Newcastle en el Reino Unido?',
+            answer : 'El proceso de Newcastle consta de varios pasos. Primero, se utiliza el esperma del padre para fecundar los óvulos de la madre afectada y una donante sana. Luego, se extrae el material genético nuclear del óvulo de la donante y se reemplaza con el del óvulo fertilizado de la pareja. El óvulo resultante contiene un conjunto completo de cromosomas de ambos padres y las mitocondrias sanas de la donante. Finalmente, el embrión se implanta en el útero de la madre.',
             publication : {
                 id : 6
             }
         }, {
-            question : '¿Qué misión espacial fue lanzada por el cohete Ariane 5 y a dónde se dirige?',
-            answer : 'La misión europea Juice fue lanzada por el cohete Ariane 5 y se dirige a Júpiter y a sus tres grandes lunas oceánicas: Calisto, Europa y Ganímedes.',
+            question : '¿Qué descubrieron los astrónomos por primera vez y cuál es su relevancia para entender el futuro de la Tierra?',
+            answer : 'Los astrónomos detectaron por primera vez el momento en que una estrella, sin combustible, traga un planeta. Este hallazgo es relevante porque proporciona una visión de lo que ocurrirá en aproximadamente 5.000 millones de años cuando el Sol muera y engulla los planetas interiores del sistema solar, incluida la Tierra.',
             publication : {
                 id: 7
             }
         }, {
-            question : '¿Qué objetivo tiene la misión Juice y qué instrumentos lleva a bordo?',
-            answer : 'El objetivo de la misión Juice es estudiar si los satélites de Júpiter reúnen condiciones de habitabilidad. La misión lleva a bordo diez instrumentos de última generación para llevar a cabo esta tarea.',
+            question : '¿Cómo pudieron los científicos explicar el estallido inicial observado y qué evidencia les llevó a concluir que se trataba de un planeta chocando contra su estrella?',
+            answer : 'Los científicos calcularon la cantidad total de energía liberada por la estrella desde el estallido inicial y descubrieron que era sorprendentemente pequeña en comparación con otras fusiones estelares observadas. A partir de estos datos, concluyeron que lo que se fusionó con la estrella debía ser 1.000 veces más pequeño que cualquier otra estrella conocida. Además, notaron que la masa de Júpiter es aproximadamente 1/1.000 la masa del Sol, lo que les llevó a la conclusión de que el estallido era resultado de un planeta del tamaño de Júpiter chocando contra su estrella.',
             publication : {
                 id: 7
             }
         }, {
-            question : '¿Cuál es la preocupación actual sobre el hielo de la Antártica?',
-            answer : 'La preocupación actual es que se está derritiendo cada vez más rápido, lo que podría provocar el colapso en un futuro cercano de varios grandes glaciares.',
+            question : '¿Qué revelaron dos estudios recientes sobre el hielo de la Antártica y cuáles podrían ser las consecuencias en el futuro?',
+            answer : 'Dos estudios recientes revelaron que el hielo de la Antártica se está derritiendo cada vez más rápido, lo que podría provocar el colapso en un futuro cercano de varios grandes glaciares. El hielo marino alrededor del continente alcanzó su mínimo histórico en 45 años, y se registró un segundo nivel más bajo en la historia en marzo, con un 28% menos de masa que el promedio.',
             publication : {
                 id: 8
             }
         }, {
-            question : '¿Qué entidad reveló que el hielo marino que rodea el continente antártico se redujo a su mínimo histórico en 45 años?',
-            answer : 'El Centro Nacional de Datos de Hielo y Nieve de Estados Unidos (Nsidc, sus siglas en inglés) reveló en febrero que el hielo marino que rodea el continente se redujo a 1,91 millones de kilómetros cuadrados, registrando su mínimo histórico en 45 años.',
+            question : '¿Cuáles son los factores que están contribuyendo al rápido deshielo en la Antártica y cómo se retroalimentan?',
+            answer : 'El aumento de las temperaturas en la Antártica se combina con otros fenómenos que se retroalimentan y aceleran el cambio climático en la región. Las precipitaciones en forma de lluvia erosionan el hielo, y la disminución del hielo marino expone al océano a una mayor radiación solar, lo que provoca un calentamiento más rápido. Estos factores contribuyen al rápido deshielo del hielo antártico.',
             publication : {
                 id: 8
             }
         }, {
-            question : '¿Qué es "El Niño" y qué efectos puede tener en el clima mundial?',
-            answer : 'El Niño" es un fenómeno meteorológico que desencadena sequías e inundaciones y provoca aumento de temperaturas en distintas partes del mundo. Puede afectar la producción de alimentos, el suministro de agua potable y la seguridad energética, entre otros aspectos.',
+            question : '¿Cuáles son algunas de las recomendaciones para crear contraseñas seguras según los expertos?',
+            answer : 'Algunas de las recomendaciones para crear contraseñas seguras son: utilizar contraseñas largas y complejas, mezclar letras mayúsculas y minúsculas, números y símbolos especiales, evitar datos fáciles de adivinar, no utilizar contraseñas comunes, no utilizar la misma contraseña en varios sitios y hacer uso de herramientas mnemotécnicas o gestores de contraseñas.',
             publication : {
                 id: 9
             }
         }, {
-            question : '¿Cuáles son las posibilidades de que se desencadene "El Niño" antes de septiembre según la Organización Meteorológica Mundial?',
-            answer : 'Según la Organización Meteorológica Mundial, las posibilidades de que se desencadene "El Niño" antes de julio son del 60%, mientras que la probabilidad de que el fenómeno comience entre julio y septiembre se eleva hasta el 80%.',
+            question : '¿Qué medidas adicionales se pueden tomar para mejorar la seguridad de las contraseñas y proteger la información personal en línea?',
+            answer : 'Además de crear contraseñas seguras, se pueden tomar medidas adicionales como cambiar las contraseñas regularmente, no guardar las contraseñas en lugares fácilmente accesibles, no compartirlas con nadie, utilizar otras formas de autenticación como códigos de verificación o reconocimiento biométrico, y mantener actualizados los software y sistemas operativos para protegerse contra las últimas amenazas cibernéticas.',
             publication : {
                 id: 9
             }
         }, {
-            question : '¿Por qué el fotógrafo alemán rechazó el premio en el concurso de fotografía Sony World Photography Awards?',
-            answer : 'El fotógrafo alemán rechazó el premio al decir que solo había postulado para ver si los jueces estaban preparados para diferenciar una imagen real de una generada por IA.',
+            question : '¿Cuál fue el precio de venta del tiranosaurio Trinity en la subasta de Zúrich?',
+            answer : 'El tiranosaurio Trinity fue vendido por 4,8 millones de francos suizos, equivalente a 4,8 millones de euros o 5,2 millones de dólares.',
             publication : {
                 id: 10
             }
         }, {
-            question : '¿Qué dificultades se han presentado en ocasiones para reconocer si una fotografía fue generada por inteligencia artificial o fue tomada en el mundo real?',
-            answer : 'En ocasiones, resulta difícil reconocer si una fotografía fue generada por inteligencia artificial o fue tomada en el mundo real, lo que destaca las dificultades que se presentan para diferenciar entre las dos opciones.',
+            question : '¿De dónde fueron desenterrados los tres tiranosaurios que componen a Trinity y cuánto tiempo se estima que vivieron?',
+            answer : 'Los tres tiranosaurios que componen a Trinity fueron desenterrados en los yacimientos estadounidenses de Hell Creek y Lance Creek, en las Montañas Rocosas de Montana y Wyoming (Estados Unidos). Se estima que vivieron hace más de 65 millones de años durante el periodo Cretácico tardío.',
             publication : {
                 id: 10
             }
