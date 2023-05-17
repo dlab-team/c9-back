@@ -38,7 +38,7 @@ export class QuestionController {
     }
     async one(request: Request, response: Response, next: NextFunction) {
         try {
-            const id = request.params.id;
+            const id = parseInt(request.params.id);
             const question = await this.questionRepository.findOne({
                 where: { id },
                 relations: {
@@ -126,7 +126,7 @@ export class QuestionController {
 
     async update(request: Request, response: Response, next: NextFunction) {
         try {
-            const id = request.params.id;
+            const id = parseInt(request.params.id);
             const questionUpdate = await this.questionRepository.findOne({
                 where: { id },
             });
