@@ -17,23 +17,23 @@ export class UserSeeder implements Seeder{
 
         const userData = [{
             email : 'email1@mail.com',
-            name : 'Prueba1',
+            name : 'Periodista1',
             password : passHashUserUno
         }, {
             email : 'email2@mail.com',
-            name : 'Prueba2',
+            name : 'Periodista2',
             password : passHashUserDos
         }, {
             email : 'email3@mail.com',
-            name : 'Prueba3',
+            name : 'Periodista3',
             password : passHashUserTres
         }, {
             email : 'email4@mail.com',
-            name : 'Prueba4',
+            name : 'Periodista4',
             password : passHashUserCuatro
         }, {
             email : 'email5@mail.com',
-            name : 'Prueba5',
+            name : 'Periodista5',
             password : passHashUserCinco
         }]
 

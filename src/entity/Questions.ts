@@ -12,7 +12,7 @@ export class Question{
     @Column({ type: 'text'})
     answer: string
 
-    @ManyToOne(() => Publication, publication => publication.questions)
+    @ManyToOne(() => Publication, publication => publication.questions, {cascade: true , onDelete: "CASCADE"})
     @JoinColumn({ name: 'publication_id'})
     publication: Publication
 }

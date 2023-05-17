@@ -41,15 +41,16 @@ Y finalmente, para correr el servidor, se procede a ejecutar:
 * POSTGRES_PASSWORD=postgres
 * POSTGRES_DB=postgres
 * POSTGRES_PORT=5432
-
 * NODE_ENV=development
-
 * PORT=3000
 * SECRET=security-key
-
 * FRONT_URL=http://localhost:3001
-
 * MAIL_HOST=
 * MAIL_PORT=
 * MAIL_USER=
 * MAIL_PASS=
+* PASSWORD_SEED_UNO=  (las password se deben rellenar con la clave que se estime conveniente)
+* PASSWORD_SEED_DOS=
+* PASSWORD_SEED_TRES=
+* PASSWORD_SEED_CUARTA=
+* PASSWORD_SEED_QUINTA=
