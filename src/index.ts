@@ -5,7 +5,6 @@ import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
-import { User } from "./entity/User";
 import * as morgan from "morgan";
 import { validationResult } from "express-validator";
 import * as swaggerUi from "swagger-ui-express";
@@ -51,7 +50,7 @@ AppDataSource.initialize()
               const { statusCode, data } = result;
               return res.status(statusCode).json(data);
             }
-            return res.tatus(200).json(result)
+            return res.status(200).json(result)
           } catch (error) {
             next(error);
           }
