@@ -18,7 +18,7 @@ luego, se corren las migraciones:
 
 para finalmente correr el script de las seed:
 
-`npm run seed`.
+`npm run seed`
 
 Con esto, correremos las migraciones y se poblará la base de datos con la data generada en los seeds.
 
@@ -49,7 +49,7 @@ Y finalmente, para correr el servidor, se procede a ejecutar:
 * MAIL_PORT=
 * MAIL_USER=
 * MAIL_PASS=
-* PASSWORD_SEED_UNO=  (las password se deben rellenar con la clave que se estime conveniente)
+* PASSWORD_SEED_UNO= (las password se deben rellenar con la clave que se estime conveniente)
 * PASSWORD_SEED_DOS=
 * PASSWORD_SEED_TRES=
 * PASSWORD_SEED_CUARTA=
