@@ -1,27 +1,7 @@
-# Logs
-*.log
-
-# Dependencies
-node_modules
-
-# Trash
-.DS_Store
-.idea
-.vscode
-
-# Coverage generated files
-coverage
-
-# Secrets
-
-
-# Docker files
-tmp
-
-package-lock.json
-
-# .env
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
 .env
-
-# Uploads
-uploads
