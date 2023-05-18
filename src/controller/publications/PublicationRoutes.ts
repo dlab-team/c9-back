@@ -39,13 +39,11 @@ import { body, param } from "express-validator";
  *        - publicaciones
  *      summary: Crear una nueva publicación
  *      description: Este endpoint se utiliza para crear una nueva publicación.
- *      parameters:
- *        - in: body
- *          name: publicaciones
- *          required: true
- *          description: Publicación a crear
- *          schema:
- *            $ref: "#/components/schemas/publications"
+ *      requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: "#/components/schemas/Publications"
  *      responses:
  *        '200':
  *          description: La publicación ha sido creada exitosamente.
@@ -69,7 +67,7 @@ import { body, param } from "express-validator";
  *        content:
  *          application/json:
  *            schema:
- *              $ref: "#/components/schemas/publications"
+ *              $ref: "#/components/schemas/Publications"
  *      responses:
  *        '200':
  *          description: La publicación ha sido actualizada exitosamente.
