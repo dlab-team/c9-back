@@ -115,4 +115,14 @@ export const userRoutes = [
         .withMessage("The minimum age must be positive integer"),
     ],
   },
+  {
+    method: "post",
+    route: "/users/auth",
+    controller: UserController,
+    action: "checkAuth",
+    validation: [
+      body("email").isString(),
+      body("password").isString(),
+    ],
+  }
 ];
