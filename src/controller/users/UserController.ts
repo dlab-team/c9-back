@@ -1,6 +1,7 @@
 import { AppDataSource } from "../../data-source";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../../entity/User";
+import { validateLogin } from './UserAuth';
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
@@ -19,17 +20,18 @@ export class UserController {
     return user;
   }
 
+  // TODO: Swagger documentation
     async checkAuth(request: Request, response: Response, next: NextFunction) {
-      const email = request.params.email;
-      const password = request.params.password;
+      const email = request.body.email;
+      const password = request.body.password;
     const user = await this.userRepository.findOne({
       where: { email },
     });
     if (!user) {
       return "unregistered user";
     }
-      // Si existe el usuario retornar JWT
-    return user;
+    const result = await validateLogin(user.name, password, user.password);
+    return result;
   }
 
   async save(request: Request, response: Response, next: NextFunction) {
