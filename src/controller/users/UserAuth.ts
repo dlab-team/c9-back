@@ -8,13 +8,12 @@ type JWTData = {
    exp: number;
 };
 
-const JWT_EXPIRATION_TIME = '30m';
+const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 function comparePasswords(userPassword: string, hashedPassword: string): boolean {
    return bcrypt.compare(userPassword, hashedPassword)
       .then(result => {
-         console.log("Result: ", result);
          return result;
       })
       .catch(err => {
@@ -41,14 +40,14 @@ export function decodeJWT(token: string): JWTData| string{
       return decoded;
    } catch (err) {
       console.log(err);
-      return "error: not a valid token";
+      return "Error: not a valid token";
    }
 }
 
 export async function validateLogin(username: string, password: string, hashedPassword: string): Promise<string | undefined> {
    const isEqual = await comparePasswords(password, hashedPassword);
    if (!isEqual) {
-      return "passwords do not match";
+      return "Error: passwords do not match";
    }
    const token = generateJWT(username);
    return token;

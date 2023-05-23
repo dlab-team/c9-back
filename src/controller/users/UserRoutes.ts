@@ -116,6 +116,7 @@ export const userRoutes = [
     ],
   },
   {
+    // TODO: Swagger documentation
     method: "post",
     route: "/users/auth",
     controller: UserController,

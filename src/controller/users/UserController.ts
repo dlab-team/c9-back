@@ -20,15 +20,14 @@ export class UserController {
     return user;
   }
 
-  // TODO: Swagger documentation
-    async checkAuth(request: Request, response: Response, next: NextFunction) {
-      const email = request.body.email;
-      const password = request.body.password;
+  async checkAuth(request: Request, response: Response, next: NextFunction) {
+    const email = request.body.email;
+    const password = request.body.password;
     const user = await this.userRepository.findOne({
       where: { email },
     });
     if (!user) {
-      return "unregistered user";
+      return "Error: unregistered user";
     }
     const result = await validateLogin(user.name, password, user.password);
     return result;
