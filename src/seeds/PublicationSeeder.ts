@@ -18,6 +18,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/05/16/file_20230516134048.jpg',
                 'https://static.emol.cl/emol50/Fotos/2023/05/16/file_20230516134057.jpg',
                 'https://static.emol.cl/emol50/Fotos/2023/05/16/file_20230516134103.jpg'],
+            published: true,
             user: {
                 id: 1
             }
@@ -32,6 +33,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/05/11/file_20230511192909.jpg',
                 'https://img.freepik.com/vector-premium/ilustracion-ciencia-e-investigacion_159144-89.jpg',
                 'https://transferencia.tec.mx/wp-content/uploads/2019/04/Ciencia-y-Tecnolog%C3%ADa.png'],
+            published: true,
             user: {
                 id: 1
             }
@@ -46,6 +48,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/05/10/file_20230510113441.jpg',
                 'https://www.criogene.es/wp-content/uploads/2018/04/adn-informacion.jpg',
                 'https://c.files.bbci.co.uk/059A/production/_106743410_gettyimages-862400928.jpg'],
+            published: true,
             user: {
                 id: 2
             }
@@ -60,6 +63,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/05/09/file_20230509105714.jpg',
                 'https://static.emol.cl/emol50/Fotos/2023/05/09/file_20230509110106.jpg',
                 'https://i.blogs.es/622876/boeing-747-de-arabia-saudita/1366_2000.jpeg'],
+            published: true,
             user: {
                 id: 2
             }
@@ -74,6 +78,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/05/10/file_20230510073121.jpg',
                 'https://www.misabogados.com/hubfs/Im%C3%A1genes%20WEBP/Test-ADN-paternidad.webp',
                 'https://ichef.bbci.co.uk/news/640/cpsprodpb/16142/production/_106743409_gettyimages-862400928.jpg'],
+            published: true,
             user: {
                 id: 3
             }
@@ -88,6 +93,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/05/03/file_20230503091522.jpg',
                 'https://www.armada.cl/armada/site/artic/20140205/imag/foto_0000000320140205124234.jpg',
                 'https://static.nationalgeographic.es/files/styles/image_3200/public/01_elnino_gettyimages-504713230.jpg?w=1600&h=1064'],
+            published: true,
             user: {
                 id: 3
             }
@@ -102,6 +108,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/05/03/file_20230503123641.jpg',
                 'https://www.el-carabobeno.com/wp-content/uploads/2023/05/Nature.png',
                 'https://cdn.forbes.com.mx/2022/09/b8b3013c16a305b082c7dea2d05c41e49486b78e-640x360.jpg'],
+            published: true,
             user: {
                 id: 4
             }
@@ -116,6 +123,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/04/23/file_20230423114515.jpg',
                 'https://www.iagua.es/sites/default/files/styles/thumbnail-830x455/public/hielo-antartico-pixabay.jpg?itok=IY7MzK8_',
                 'https://cloudfront-us-east-1.images.arcpublishing.com/infobae/QLRRY46ORJAPNFYYR3NRQMH4SY.jpg'],
+            published: true,
             user: {
                 id: 4
             }
@@ -128,8 +136,9 @@ export class PublicationSeeder implements Seeder {
             createdAt: new Date(),
             category: CategoryTypes.CIENCIA,
             images: ['https://static.emol.cl/emol50/Fotos/2023/05/04/file_20230504130231.jpg',
-            'https://static.vecteezy.com/system/resources/previews/005/879/539/original/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg',
-            'https://s1.eestatic.com/2017/08/25/actualidad/actualidad_241740063_129998099_1706x960.jpg'],
+                'https://static.vecteezy.com/system/resources/previews/005/879/539/original/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg',
+                'https://s1.eestatic.com/2017/08/25/actualidad/actualidad_241740063_129998099_1706x960.jpg'],
+            published: true,
             user: {
                 id: 5
             }
@@ -144,6 +153,7 @@ export class PublicationSeeder implements Seeder {
             images: ['https://static.emol.cl/emol50/Fotos/2023/04/18/file_20230418133511.jpg',
                 'https://i0.wp.com/imgs.hipertextual.com/wp-content/uploads/2019/09/hipertextual-hallan-explicacion-misteriosos-orificios-craneo-tyrannosaurus-rex-2019489514.jpg?fit=1920%2C1283&quality=50&strip=all&ssl=1',
                 'https://cnnespanol.cnn.com/wp-content/uploads/2016/08/1-dinosaur-head-main-tease-exlarge-169.jpg?quality=100&strip=info'],
+            published: true,
             user: {
                 id: 5
             }
