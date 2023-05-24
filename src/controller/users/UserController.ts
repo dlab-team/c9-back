@@ -29,7 +29,7 @@ export class UserController {
     if (!user) {
       return "Error: unregistered user";
     }
-    const result = await validateLogin(user.name, password, user.password);
+    const result = await validateLogin(user, password);
     return result;
   }
 

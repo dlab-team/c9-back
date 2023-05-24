@@ -1,9 +1,12 @@
+import { User } from "../../entity/User";
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 type JWTData = {
    username: string;
+   // role: string;
    iat: number;
    exp: number;
 };
@@ -21,13 +24,14 @@ function comparePasswords(userPassword: string, hashedPassword: string): boolean
       });
 }
 
-function generateJWT(username: string): string {
+function generateJWT(user: User): string {
    const currentDate = new Date();
    const expirationDate = new Date(
       currentDate.getTime() + Number(JWT_EXPIRATION_TIME.replace('m', '')) * 60000
    );
    const data: JWTData = {
-      username,
+      username: user.name,
+      // role: user.role,
       iat: currentDate.getTime(),
       exp: expirationDate.getTime(),
    };
@@ -40,15 +44,16 @@ export function decodeJWT(token: string): JWTData| string{
       return decoded;
    } catch (err) {
       console.log(err);
-      return "Error: not a valid token";
+      return "Error: invalid token";
    }
 }
 
-export async function validateLogin(username: string, password: string, hashedPassword: string): Promise<string | undefined> {
-   const isEqual = await comparePasswords(password, hashedPassword);
+export async function validateLogin(user: User, password: string): Promise<string | undefined> {
+   const isEqual = await comparePasswords(password, user.password);
    if (!isEqual) {
       return "Error: passwords do not match";
    }
-   const token = generateJWT(username);
+   const token = generateJWT(user);
+   console.log(decodeJWT(token));
    return token;
 }
