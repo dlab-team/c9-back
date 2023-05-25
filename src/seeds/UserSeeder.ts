@@ -10,6 +10,7 @@ const passHashUserDos = bcrypt.hashSync(String(process.env.PASSWORD_SEED_DOS), s
 const passHashUserTres = bcrypt.hashSync(String(process.env.PASSWORD_SEED_TRES), salt)
 const passHashUserCuatro = bcrypt.hashSync(String(process.env.PASSWORD_SEED_CUATRO), salt)
 const passHashUserCinco = bcrypt.hashSync(String(process.env.PASSWORD_SEED_CINCO), salt)
+const passHashUserSeis = bcrypt.hashSync(String(process.env.PASSWORD_SEED_SEIS), salt)
 
 export class UserSeeder implements Seeder{
     async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -35,6 +36,11 @@ export class UserSeeder implements Seeder{
             email : 'email5@mail.com',
             name : 'Periodista5',
             password : passHashUserCinco
+        }, {
+            email : 'admin@mail.com',
+            name : 'Admin123',
+            password : passHashUserSeis,
+            isAdmin: true
         }]
 
         const newUser = userRepository.create(userData)

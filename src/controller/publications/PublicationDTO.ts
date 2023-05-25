@@ -20,6 +20,7 @@ export function asDTO(response: any): { publication: any } {
     initialContent,
     finalContent,
     images,
+    published,
     category,
     createdAt,
     user,
@@ -41,6 +42,7 @@ export function asDTO(response: any): { publication: any } {
     initialContent,
     finalContent,
     images: images.map((image: string) => ({ url: image })),
+    published,
     publicationDate,
     category,
     region: "Metropolitana", // TODO: Add region to publication
