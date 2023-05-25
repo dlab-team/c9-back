@@ -6,7 +6,8 @@ require('dotenv').config();
 
 type JWTData = {
    username: string;
-   // role: string;
+   email: string;
+   isAdmin: boolean;
    iat: number;
    exp: number;
 };
@@ -31,14 +32,15 @@ function generateJWT(user: User): string {
    );
    const data: JWTData = {
       username: user.name,
-      // role: user.role,
+      email: user.email,
+      isAdmin: user.isAdmin,
       iat: currentDate.getTime(),
       exp: expirationDate.getTime(),
    };
    return jwt.sign(data, JWT_SECRET);
 }
 
-export function decodeJWT(token: string): JWTData| string{
+export function decodeJWT(token: string): JWTData | string {
    try {
       const decoded = jwt.verify(token, JWT_SECRET) as JWTData;
       return decoded;
@@ -54,6 +56,5 @@ export async function validateLogin(user: User, password: string): Promise<strin
       return "Error: passwords do not match";
    }
    const token = generateJWT(user);
-   console.log(decodeJWT(token));
    return token;
 }
