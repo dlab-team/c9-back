@@ -85,6 +85,29 @@ import { body, param } from "express-validator";
  *          description: El usuario ha sido eliminado exitosamente.
  *        '404':
  *          description: Usuario no encontrado.
+ * /users/auth:
+ *    post:
+ *      tags:
+ *        - usuarios
+ *      summary: Autentica un usuario
+ *      description: Este endpoint se utiliza para autenticar un usuario contra la base de datos.
+ *      requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                email:
+ *                  type: string
+ *                password:
+ *                  type: string
+ *      responses:
+ *        '400':
+ *          description: El usuario no existe en la base de datos.
+ *        '422':
+ *          description: Error de validación.
+ *        '200':
+ *          description: Devuelve un JWT con los datos del usuario.
  */
 
 export const userRoutes = [
@@ -115,4 +138,14 @@ export const userRoutes = [
         .withMessage("The minimum age must be positive integer"),
     ],
   },
+  {
+    method: "post",
+    route: "/users/auth",
+    controller: UserController,
+    action: "checkAuth",
+    validation: [
+      body("email").isString(),
+      body("password").isString(),
+    ],
+  }
 ];
