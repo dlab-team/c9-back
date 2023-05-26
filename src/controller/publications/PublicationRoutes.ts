@@ -122,7 +122,6 @@ export const publicationRoutes = [
       body("initialContent").isString(),
       body("finalContent").isString(),
       body("category").isString(),
-      body("images").isString(),
       body("user_id")
         .isInt({ min: 1 })
         .withMessage("The minimum user_id must be positive integer"),

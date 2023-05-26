@@ -2,6 +2,7 @@ import { AppDataSource } from '../../data-source';
 import { NextFunction, Request, Response } from 'express';
 import { Publication } from '../../entity/Publication';
 import { asDTO, asDTOs } from './PublicationDTO';
+import { ImagesUploader } from '../../services/ImagesUploader';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -91,6 +92,12 @@ export class PublicationController {
    * @returns La publicación creada.
    */
   async save(request: Request, response: Response, next: NextFunction) {
+    const imagesUploaderService = new ImagesUploader();
+    let imagesUrls: string[];
+    if(request.files) {
+      imagesUrls = await imagesUploaderService.uploadImages(request.files.images);
+    }
+    
     try {
       const {
         name,
@@ -98,7 +105,6 @@ export class PublicationController {
         initialContent,
         finalContent,
         category,
-        images,
         user_id,
       } = request.body;
       const publication = this.publicationRepository.create({
@@ -107,7 +113,7 @@ export class PublicationController {
         initialContent,
         finalContent,
         category,
-        images,
+        images: imagesUrls,
         user: {
           id: user_id,
         },
@@ -124,7 +130,7 @@ export class PublicationController {
         data: {
           message: 'Ha ocurrido un error creando una nueva Publicación',
           error: error.detail,
-        },
+        }
       };
     }
   }
