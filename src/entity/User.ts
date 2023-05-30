@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm"
 import { Publication } from "./Publication"
 
 @Entity()
@@ -18,4 +18,5 @@ export class User {
 
     @OneToMany(() => Publication, publication => publication.user)
     publications: Publication[]
+
 }

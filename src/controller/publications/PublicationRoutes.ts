@@ -126,6 +126,8 @@ export const publicationRoutes = [
       body("user_id")
         .isInt({ min: 1 })
         .withMessage("The minimum user_id must be positive integer"),
+      body("region").isString(),
+      body("city").isString(),
     ],
   },
   {
@@ -143,6 +145,8 @@ export const publicationRoutes = [
       body("user_id")
         .isInt({ min: 1 })
         .withMessage("The minimum user_id must be positive integer"),
+      body("region").isString(),
+      body("city").isString(),
     ],
   },
   {

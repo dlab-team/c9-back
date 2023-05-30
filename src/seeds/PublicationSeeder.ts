@@ -20,6 +20,9 @@ export class PublicationSeeder implements Seeder {
                 'https://static.emol.cl/emol50/Fotos/2023/05/16/file_20230516134103.jpg'],
             user: {
                 id: 1
+            },
+            region: {
+                name: "Arica"
             }
         }, {
             id: 2,
@@ -34,6 +37,9 @@ export class PublicationSeeder implements Seeder {
                 'https://transferencia.tec.mx/wp-content/uploads/2019/04/Ciencia-y-Tecnolog%C3%ADa.png'],
             user: {
                 id: 1
+            },
+            region: {
+                name: "Arica"
             }
         }, {
             id: 3,
@@ -48,6 +54,9 @@ export class PublicationSeeder implements Seeder {
                 'https://c.files.bbci.co.uk/059A/production/_106743410_gettyimages-862400928.jpg'],
             user: {
                 id: 2
+            },
+            region: {
+                name: "Arica"
             }
         }, {
             id: 4,
@@ -62,6 +71,9 @@ export class PublicationSeeder implements Seeder {
                 'https://i.blogs.es/622876/boeing-747-de-arabia-saudita/1366_2000.jpeg'],
             user: {
                 id: 2
+            },
+            region: {
+                name: "Arica"
             }
         }, {
             id: 5,
@@ -76,6 +88,9 @@ export class PublicationSeeder implements Seeder {
                 'https://ichef.bbci.co.uk/news/640/cpsprodpb/16142/production/_106743409_gettyimages-862400928.jpg'],
             user: {
                 id: 3
+            },
+            region: {
+                name: "Arica"
             }
         }, {
             id: 6,
@@ -90,6 +105,9 @@ export class PublicationSeeder implements Seeder {
                 'https://static.nationalgeographic.es/files/styles/image_3200/public/01_elnino_gettyimages-504713230.jpg?w=1600&h=1064'],
             user: {
                 id: 3
+            },
+                        region: {
+                name: "Arica"
             }
         }, {
             id: 7,
@@ -104,6 +122,9 @@ export class PublicationSeeder implements Seeder {
                 'https://cdn.forbes.com.mx/2022/09/b8b3013c16a305b082c7dea2d05c41e49486b78e-640x360.jpg'],
             user: {
                 id: 4
+            },
+            region: {
+                name: "Arica"
             }
         }, {
             id: 8,
@@ -118,6 +139,9 @@ export class PublicationSeeder implements Seeder {
                 'https://cloudfront-us-east-1.images.arcpublishing.com/infobae/QLRRY46ORJAPNFYYR3NRQMH4SY.jpg'],
             user: {
                 id: 4
+            },
+            region: {
+                name: "Arica"
             }
         }, {
             id: 9,
@@ -132,7 +156,10 @@ export class PublicationSeeder implements Seeder {
             'https://s1.eestatic.com/2017/08/25/actualidad/actualidad_241740063_129998099_1706x960.jpg'],
             user: {
                 id: 5
-            }
+            },
+            region: {
+                name: "Arica"
+            },
         }, {
             id: 10,
             name: 'Tiranosaurio Trinity es subastado por US$ 5,2 millones: Cifra quedó por debajo de las expectativas',
@@ -146,6 +173,9 @@ export class PublicationSeeder implements Seeder {
                 'https://cnnespanol.cnn.com/wp-content/uploads/2016/08/1-dinosaur-head-main-tease-exlarge-169.jpg?quality=100&strip=info'],
             user: {
                 id: 5
+            },
+            region: {
+                name: "Arica"
             }
         }]
 

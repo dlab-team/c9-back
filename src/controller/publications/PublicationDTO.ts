@@ -24,6 +24,8 @@ export function asDTO(response: any): { publication: any } {
     createdAt,
     user,
     questions,
+    region,
+    city,
   } = response;
 
   const date = new Date(createdAt);
@@ -43,8 +45,8 @@ export function asDTO(response: any): { publication: any } {
     images: images.map((image: string) => ({ url: image })),
     publicationDate,
     category,
-    region: "Metropolitana", // TODO: Add region to publication
-    city: "Santiago", // TODO: Add city to publication
+    region, 
+    city,
     author: user.name,
     questions: questions.map(
       (question: { question: string; answer: string }) => ({

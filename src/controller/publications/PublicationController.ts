@@ -14,6 +14,8 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
+          region: true,
+          city: true,
         },
         select: {
           user: {
@@ -56,6 +58,8 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
+          region: true,
+          city: true,
         },
         select: {
           user: {
@@ -100,6 +104,8 @@ export class PublicationController {
         category,
         images,
         user_id,
+        region,
+        city,
       } = request.body;
       const publication = this.publicationRepository.create({
         name,
@@ -110,6 +116,12 @@ export class PublicationController {
         images,
         user: {
           id: user_id,
+        },
+        region: {
+          name: region
+        },
+        city: {
+          name: city
         },
       });
       const result = await this.publicationRepository.save(publication);
@@ -143,6 +155,8 @@ export class PublicationController {
         where: { slug: busquedaSlug },
         relations: {
           user: true,
+          region: true,
+          city: true,
         },
         select: {
           user: {
@@ -166,6 +180,8 @@ export class PublicationController {
         category,
         images,
         user_id,
+        region,
+        city,
       } = request.body;
       publication.name = name;
       publication.slug = slug;
@@ -174,6 +190,8 @@ export class PublicationController {
       publication.category = category;
       publication.images = images;
       publication.user.id = user_id;
+      publication.region = region;
+      publication.city = city;
       await this.publicationRepository.save(publication);
       return {
         statusCode: 200,
