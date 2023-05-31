@@ -77,7 +77,7 @@ export class PublicationController {
       return {
         statusCode: 400,
         data: {
-          message: 'Ha ocurrido un error obteniendo las Publicaciónes',
+          message: 'Ha ocurrido un error obteniendo las Publicaciones',
           error: error.detail,
         },
       };
