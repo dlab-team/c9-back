@@ -1,8 +1,8 @@
-import { AppDataSource } from '../../data-source';
-import { NextFunction, Request, Response } from 'express';
-import { Publication } from '../../entity/Publication';
-import { asDTO, asDTOs } from './PublicationDTO';
-import { ImagesUploader } from '../../services/ImagesUploader';
+import { AppDataSource } from "../../data-source";
+import { NextFunction, Request, Response } from "express";
+import { Publication } from "../../entity/Publication";
+import { asDTO, asDTOs } from "./PublicationDTO";
+import { ImagesUploader } from "../../services/ImagesUploader";
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -25,7 +25,7 @@ export class PublicationController {
       if (!publication) {
         return {
           statusCode: 404,
-          data: { message: 'La publicación que se intenta buscar no existe' },
+          data: { message: "La publicación que se intenta buscar no existe" },
         };
       }
       const publicationDTO = asDTO(publication);
@@ -37,7 +37,7 @@ export class PublicationController {
       return {
         statusCode: 400,
         data: {
-          message: 'Ha ocurrido un error trayendo la publicación',
+          message: "Ha ocurrido un error trayendo la publicación",
           error: error.detail,
         },
       };
@@ -77,7 +77,7 @@ export class PublicationController {
       return {
         statusCode: 400,
         data: {
-          message: 'Ha ocurrido un error obteniendo las Publicaciónes',
+          message: "Ha ocurrido un error obteniendo las Publicaciónes",
           error: error.detail,
         },
       };
@@ -94,19 +94,15 @@ export class PublicationController {
   async save(request: Request, response: Response, next: NextFunction) {
     const imagesUploaderService = new ImagesUploader();
     let imagesUrls: string[];
-    if(request.files) {
-      imagesUrls = await imagesUploaderService.uploadImages(request.files.images);
+    if (request.files) {
+      imagesUrls = await imagesUploaderService.uploadImages(
+        request.files.images
+      );
     }
-    
+
     try {
-      const {
-        name,
-        slug,
-        initialContent,
-        finalContent,
-        category,
-        user_id,
-      } = request.body;
+      const { name, slug, initialContent, finalContent, category, user_id } =
+        request.body;
       const publication = this.publicationRepository.create({
         name,
         slug,
@@ -128,9 +124,9 @@ export class PublicationController {
       return {
         statusCode: 400,
         data: {
-          message: 'Ha ocurrido un error creando una nueva Publicación',
+          message: "Ha ocurrido un error creando una nueva Publicación",
           error: error.detail,
-        }
+        },
       };
     }
   }
@@ -160,7 +156,7 @@ export class PublicationController {
         return {
           statusCode: 400,
           data: {
-            message: 'La publicación que se intenta actualizar no existe',
+            message: "La publicación que se intenta actualizar no existe",
           },
         };
       }
@@ -171,7 +167,8 @@ export class PublicationController {
         finalContent,
         category,
         images,
-        user_id,
+        // user_id, no debe ir
+        published,
       } = request.body;
       publication.name = name;
       publication.slug = slug;
@@ -179,17 +176,19 @@ export class PublicationController {
       publication.finalContent = finalContent;
       publication.category = category;
       publication.images = images;
-      publication.user.id = user_id;
+      //  publication.user.id = user_id;
+      publication.published = published;
       await this.publicationRepository.save(publication);
+      const publicationDTO = asDTO(publication);
       return {
         statusCode: 200,
-        data: publication,
+        data: publicationDTO,
       };
     } catch (error) {
       return {
         statusCode: 400,
         data: {
-          message: 'Ha ocurrido un error actualizando la Publicación',
+          message: "Ha ocurrido un error actualizando la Publicación",
           error: error.detail,
         },
       };
@@ -214,25 +213,25 @@ export class PublicationController {
           },
         },
       });
-      console.log('slug', slug);
+      console.log("slug", slug);
       console.log(publicationToRemove);
       if (!publicationToRemove) {
         return {
           statusCode: 404,
-          data: { message: 'La publicación que se intenta borrar no existe' },
+          data: { message: "La publicación que se intenta borrar no existe" },
         };
       }
       await this.publicationRepository.remove(publicationToRemove);
       return {
         statusCode: 200,
-        data: { message: 'La Publicación se ha borrado correctamente' },
+        data: { message: "La Publicación se ha borrado correctamente" },
       };
     } catch (error) {
       return {
         statusCode: 400,
         data: {
           message:
-            'Ha ocurrido un error eliminando una pregunta con su respuesta',
+            "Ha ocurrido un error eliminando una pregunta con su respuesta",
           error: error.detail,
         },
       };
