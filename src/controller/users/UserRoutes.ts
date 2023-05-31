@@ -123,7 +123,9 @@ export const userRoutes = [
     route: "/users/:id",
     controller: UserController,
     action: "one",
-    validation: [param("id").isInt()],
+    validation: [
+      param("id").isInt()
+    ],
   },
   {
     method: "post",
@@ -146,6 +148,15 @@ export const userRoutes = [
     validation: [
       body("email").isString(),
       body("password").isString(),
+    ],
+  }, {
+    method: "put",
+    route: "/users/:id",
+    controller: UserController,
+    action: "update",
+    validation: [
+      body("name").isString(),
+      body("enabled").isBoolean(),
     ],
   }
 ];

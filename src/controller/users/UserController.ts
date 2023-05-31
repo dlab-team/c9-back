@@ -6,18 +6,69 @@ import { validateLogin } from './UserAuth';
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
   async all(request: Request, response: Response, next: NextFunction) {
-    return this.userRepository.find();
+    try {
+      const usuarios = await this.userRepository.find({
+        where: {isAdmin: false},
+        relations: {
+          publications: true
+        },
+        select: {
+          name: true,
+          email: true,
+          enabled: true,
+          publications: {
+            name: true,
+            published: true
+          }
+        }
+      });
+      return {
+        statusCode: 200,
+        data: usuarios,
+      }
+    } catch (error) {
+      return {
+        statusCode: 400,
+        data: {
+          message: 'Ha ocurrido un error obteniendo los Usuarios',
+          error: error.detail,
+        },
+      };
+    }
   }
 
   async one(request: Request, response: Response, next: NextFunction) {
-    const id = parseInt(request.params.id);
-    const user = await this.userRepository.findOne({
-      where: { id },
-    });
-    if (!user) {
-      return "unregistered user";
+    try {
+      const id = parseInt(request.params.id);
+      const user = await this.userRepository.findOne({
+        where: { id },
+      });
+      if (!user) {
+        return {
+          statusCode: 404,
+          data: { message: 'El usuario que se intenta buscar no existe' },
+        }
+      } if (user.isAdmin === true) {
+        return {
+          statusCode: 401,
+          data: { message: 'No esta autorizado a ver este usuario' }
+        }
+      }
+      return {
+        statusCode: 200,
+        data: user,
+      }
+    } catch (error) {
+      return {
+        statusCode: 400,
+        data: {
+          message: 'Ha ocurrido un error obteniendo al Usuario',
+          error: error.detail,
+        },
+      };
     }
-    return user;
+
+
   }
 
   async checkAuth(request: Request, response: Response, next: NextFunction) {
@@ -46,13 +97,39 @@ export class UserController {
     return this.userRepository.save(user);
   }
 
-  async remove(request: Request, response: Response, next: NextFunction) {
-    const id = parseInt(request.params.id);
-    const userToRemove = await this.userRepository.findOneBy({ id });
-    if (!userToRemove) {
-      return "this user not exist";
+  async update(request: Request, response: Response, next: NextFunction) {
+    try {
+      const id = parseInt(request.params.id);
+      const usuario = await this.userRepository.findOne({
+        where: { id },
+      });
+      if (!usuario) {
+        return {
+          statusCode: 400,
+          data: {
+            message: 'El Usuario que se intenta actualizar no existe',
+          },
+        };
+      }
+      const {
+        name,
+        enabled,
+      } = request.body;
+      usuario.name = name;
+      usuario.enabled = enabled;
+      await this.userRepository.save(usuario);
+      return {
+        statusCode: 200,
+        data: usuario,
+      };
+    } catch (error) {
+      return {
+        statusCode: 400,
+        data: {
+          message: 'Ha ocurrido un error actualizando el Usuario',
+          error: error.detail,
+        },
+      };
     }
-    await this.userRepository.remove(userToRemove);
-    return "user has been removed";
   }
 }
