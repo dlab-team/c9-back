@@ -7,7 +7,7 @@ export class UserController {
   private userRepository = AppDataSource.getRepository(User);
   async all(request: Request, response: Response, next: NextFunction) {
     try {
-      const usuarios = await this.userRepository.find({
+      const users = await this.userRepository.find({
         where: {isAdmin: false},
         relations: {
           publications: true
@@ -24,7 +24,7 @@ export class UserController {
       });
       return {
         statusCode: 200,
-        data: usuarios,
+        data: users,
       }
     } catch (error) {
       return {
@@ -100,10 +100,10 @@ export class UserController {
   async update(request: Request, response: Response, next: NextFunction) {
     try {
       const id = parseInt(request.params.id);
-      const usuario = await this.userRepository.findOne({
+      const user = await this.userRepository.findOne({
         where: { id },
       });
-      if (!usuario) {
+      if (!user) {
         return {
           statusCode: 400,
           data: {
@@ -115,12 +115,12 @@ export class UserController {
         name,
         enabled,
       } = request.body;
-      usuario.name = name;
-      usuario.enabled = enabled;
-      await this.userRepository.save(usuario);
+      user.name = name;
+      user.enabled = enabled;
+      await this.userRepository.save(user);
       return {
         statusCode: 200,
-        data: usuario,
+        data: user,
       };
     } catch (error) {
       return {
