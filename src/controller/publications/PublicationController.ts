@@ -6,8 +6,7 @@ import { ImagesUploader } from '../../services/ImagesUploader';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
-
-  async one(request: Request, response: Response, next: NextFunction) {
+  public one = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const slug = request.params.slug;
       const publication = await this.publicationRepository.findOne({
@@ -23,24 +22,12 @@ export class PublicationController {
         },
       });
       if (!publication) {
-        return {
-          statusCode: 404,
-          data: { message: 'La publicación que se intenta buscar no existe' },
-        };
+        return response.status(404).json({ message: 'La publicación que se intenta buscar no existe'})
       }
       const publicationDTO = asDTO(publication);
-      return {
-        statusCode: 200,
-        data: publicationDTO,
-      };
+      return response.status(200).json(publicationDTO);
     } catch (error) {
-      return {
-        statusCode: 400,
-        data: {
-          message: 'Ha ocurrido un error trayendo la publicación',
-          error: error.detail,
-        },
-      };
+      return response.status(400).json({ message: 'Ha ocurrido un error trayendo la publicación', error: error.detail,});
     }
   }
 
@@ -51,9 +38,10 @@ export class PublicationController {
    * @param next - La función que se llamará después de que se complete la operación.
    * @returns Un arreglo de objetos DTO que representan las publicaciones.
    */
-  async all(request: Request, response: Response, next: NextFunction) {
+  public all = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const publications = await this.publicationRepository.find({
+        where: { user: true || false},
         relations: {
           user: true,
           questions: true,
@@ -69,18 +57,10 @@ export class PublicationController {
         },
       });
       const publicationDTOs = asDTOs(publications);
-      return {
-        statusCode: 200,
-        data: publicationDTOs,
-      };
+      return response.status(200).json(publicationDTOs);
     } catch (error) {
-      return {
-        statusCode: 400,
-        data: {
-          message: 'Ha ocurrido un error obteniendo las Publicaciones',
-          error: error.detail,
-        },
-      };
+      console.log(error)
+      return response.status(400).json({ message: 'Ha ocurrido un error obteniendo las Publicaciones', error: error.detail,});
     }
   }
 
@@ -91,13 +71,12 @@ export class PublicationController {
    * @param next - La función que se llamará después de que se complete la operación.
    * @returns La publicación creada.
    */
-  async save(request: Request, response: Response, next: NextFunction) {
+  public save = async (request: Request, response: Response, next: NextFunction) => {
     const imagesUploaderService = new ImagesUploader();
     let imagesUrls: string[];
     if(request.files) {
       imagesUrls = await imagesUploaderService.uploadImages(request.files.images);
     }
-    
     try {
       const {
         name,
@@ -107,31 +86,38 @@ export class PublicationController {
         category,
         user_id,
       } = request.body;
-      const publication = this.publicationRepository.create({
-        name,
-        slug,
-        initialContent,
-        finalContent,
-        category,
-        images: imagesUrls,
-        user: {
-          id: user_id,
-        },
-      });
-      const result = await this.publicationRepository.save(publication);
-      return {
-        statusCode: 201,
-        data: result,
-      };
+      if (user_id){
+        const publication = this.publicationRepository.create({
+          name,
+          slug,
+          initialContent,
+          finalContent,
+          category,
+          images: imagesUrls,
+          user: {
+            id: user_id,
+          },
+        });
+        const result = await this.publicationRepository.save(publication);
+        return response.status(201).json(result);
+      } else {
+        const user_id = null
+        const publication = this.publicationRepository.create({
+          name,
+          slug,
+          initialContent,
+          finalContent,
+          category,
+          images: imagesUrls,
+          user: {
+            id: user_id,
+          },
+        });
+        const result = await this.publicationRepository.save(publication);
+        return response.status(201).json(result);
+      }
     } catch (error) {
-      console.log(error);
-      return {
-        statusCode: 400,
-        data: {
-          message: 'Ha ocurrido un error creando una nueva Publicación',
-          error: error.detail,
-        }
-      };
+      return response.status(400).json({ message: 'Ha ocurrido un error creando una nueva Publicación', error: error.detail,});
     }
   }
 
@@ -142,7 +128,7 @@ export class PublicationController {
    * @param next - La función que se llamará después de que se complete la operación.
    * @returns La publicación actualizada.
    */
-  async update(request: Request, response: Response, next: NextFunction) {
+  public update = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const busquedaSlug = request.params.slug;
       const publication = await this.publicationRepository.findOne({
@@ -157,12 +143,7 @@ export class PublicationController {
         },
       });
       if (!publication) {
-        return {
-          statusCode: 400,
-          data: {
-            message: 'La publicación que se intenta actualizar no existe',
-          },
-        };
+        return response.status(400).json({ message: 'La publicación que se intenta actualizar no existe'});
       }
       const {
         name,
@@ -181,18 +162,9 @@ export class PublicationController {
       publication.images = images;
       publication.user.id = user_id;
       await this.publicationRepository.save(publication);
-      return {
-        statusCode: 200,
-        data: publication,
-      };
+      return response.status(200).json(publication);
     } catch (error) {
-      return {
-        statusCode: 400,
-        data: {
-          message: 'Ha ocurrido un error actualizando la Publicación',
-          error: error.detail,
-        },
-      };
+      return response.status(400).json({ message: 'Ha ocurrido un error actualizando la Publicación', error: error.detail,});
     }
   }
 
@@ -203,7 +175,7 @@ export class PublicationController {
    * @param next - La función que se llamará después de que se complete la operación.
    * @returns Un mensaje que indica si la publicación se eliminó correctamente o no.
    */
-  async remove(request: Request, response: Response, next: NextFunction) {
+  public remove = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const slug = request.params.slug;
       const publicationToRemove = await this.publicationRepository.findOne({
@@ -214,28 +186,13 @@ export class PublicationController {
           },
         },
       });
-      console.log('slug', slug);
-      console.log(publicationToRemove);
       if (!publicationToRemove) {
-        return {
-          statusCode: 404,
-          data: { message: 'La publicación que se intenta borrar no existe' },
-        };
+        return response.status(404).json({ message: 'La publicación que se intenta borrar no existe'});
       }
       await this.publicationRepository.remove(publicationToRemove);
-      return {
-        statusCode: 200,
-        data: { message: 'La Publicación se ha borrado correctamente' },
-      };
+      return response.status(200).json({ message: 'La Publicación se ha borrado correctamente'});
     } catch (error) {
-      return {
-        statusCode: 400,
-        data: {
-          message:
-            'Ha ocurrido un error eliminando una pregunta con su respuesta',
-          error: error.detail,
-        },
-      };
+      return response.status(400).json({ message: 'Ha ocurrido un error eliminando una pregunta con su respuesta', error: error.detail,});
     }
   }
 }

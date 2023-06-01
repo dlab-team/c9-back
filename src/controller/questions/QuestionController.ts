@@ -6,7 +6,7 @@ import { Any } from "typeorm";
 
 export class QuestionController {
   private questionRepository = AppDataSource.getRepository(Question);
-    async all(request: Request, response: Response, next: NextFunction) {
+    public all = async (request: Request, response: Response, next: NextFunction) => {
         try {
             const questions = await this.questionRepository.find({
                 relations: {
@@ -25,18 +25,12 @@ export class QuestionController {
                     }
                 }
             });
-            return {
-                statusCode: 200,
-                data: questions
-              };
+            return response.status(200).json(questions)
         } catch (error) {
-            return {
-                statusCode: 400,
-                data: { message: "Ha ocurrido un error obteniendo todas las Preguntas", error: error.detail }
-              };
+            return response.status(400).json({ message: "Ha ocurrido un error obteniendo todas las Preguntas", error: error.detail })
         }
     }
-    async one(request: Request, response: Response, next: NextFunction) {
+    public one = async (request: Request, response: Response, next: NextFunction) => {
         try {
             const id = parseInt(request.params.id);
             const question = await this.questionRepository.findOne({
@@ -59,25 +53,16 @@ export class QuestionController {
                 }
             });
             if (!question) {
-                return {
-                    statusCode: 404,
-                    data: { message: "La pregunta que se busca no existe" }
-                  };
+                return response.status(404).json({ message: "La pregunta que se busca no existe" })
             }
-            return {
-                statusCode: 200,
-                data: question
-              };
+            return response.status(200).json(question)
         } catch (error) {
-            return {
-                statusCode: 400,
-                data: { message: "Ha ocurrido un error obteniendo una pregunta", error: error.detail }
-              };
+            return response.status(400).json({ message: "Ha ocurrido un error obteniendo una pregunta", error: error.detail });
         }
 
     };
 
-    async save(request: Request, response: Response, next: NextFunction) {
+    public save = async (request: Request, response: Response, next: NextFunction) => {
         try {
             const { question, answer, publication_id } = request.body;
             const questionCreate = this.questionRepository.create({
@@ -88,67 +73,43 @@ export class QuestionController {
                 }
             });
             const results = await this.questionRepository.save(questionCreate);
-            return {
-                statusCode: 201,
-                data: results
-              };
+            return response.status(201).json(results);
         } catch (error) {
-            return {
-                statusCode: 400,
-                data: { message: "Ha ocurrido un error creando una pregunta con su respuesta", error: error.detail }
-              };
+            return response.status(400).json({ message: "Ha ocurrido un error creando una pregunta con su respuesta", error: error.detail });
         }
 
     };
 
-    async remove(request: Request, response: Response, next: NextFunction) {
+    public remove = async (request: Request, response: Response, next: NextFunction) => {
         try {
             const id = parseInt(request.params.id);
             const questionToRemove = await this.questionRepository.findOneBy({ id });
             if (!questionToRemove) {
-                return {
-                    statusCode: 404,
-                    data: { message: "La pregunta que intenta eliminar no existe" }
-                  };
+                return response.status(404).json({ message: "La pregunta que intenta eliminar no existe" });
             }
             await this.questionRepository.remove(questionToRemove);
-            return {
-                statusCode: 201,
-                data: { message: "La pregunta se ha borrado de forma exitosa" }
-              };
+            return response.status(200).json({ message: "La pregunta se ha borrado de forma exitosa" });
         } catch (error) {
-            return {
-                statusCode: 400,
-                data: { message: "Ha ocurrido un error eliminando una pregunta con su respuesta", error: error.detail }
-              };
+            return response.status(400).json({ message: "Ha ocurrido un error eliminando una pregunta con su respuesta", error: error.detail });
         }
     };
 
-    async update(request: Request, response: Response, next: NextFunction) {
+    public update = async (request: Request, response: Response, next: NextFunction) => {
         try {
             const id = parseInt(request.params.id);
             const questionUpdate = await this.questionRepository.findOne({
                 where: { id },
             });
             if (!questionUpdate) {
-                return {
-                    statusCode: 404,
-                    data: { message: "No se encontró la pregunta a actualizar" }
-                  };
+                return response.status(404).json({ message: "No se encontró la pregunta a actualizar" });
             }
             const { question, answer } = request.body;
             questionUpdate.question = question;
             questionUpdate.answer = answer;
             await this.questionRepository.save(questionUpdate);
-            return {
-                statusCode: 200,
-                data: questionUpdate
-              };
+            return response.status(200).json(questionUpdate);
         } catch (error) {
-            return {
-                statusCode: 400,
-                data: { message: "Ha ocurrido un error actualizando una pregunta con su respuesta", error: error.detail }
-              };
+            return response.status(400).json({ message: "Ha ocurrido un error actualizando una pregunta con su respuesta", error: error.detail });
         }
     }
   }

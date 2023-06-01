@@ -39,8 +39,8 @@ export class Publication {
     @Column({ default: false})
     published: boolean
 
-    @ManyToOne(() => User, user => user.publications)
-    @JoinColumn({ name: 'user_id'})
+    @ManyToOne(() => User, user => user.publications, { nullable: true, })
+    @JoinColumn({ name: 'user_id',})
     user: User
 
     @OneToMany(() => Question, question => question.publication)
