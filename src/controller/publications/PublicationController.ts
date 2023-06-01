@@ -84,6 +84,7 @@ export class PublicationController {
         initialContent,
         finalContent,
         category,
+        published,
         user_id,
       } = request.body;
       if (user_id){
@@ -93,6 +94,7 @@ export class PublicationController {
           initialContent,
           finalContent,
           category,
+          published,
           images: imagesUrls,
           user: {
             id: user_id,
@@ -108,6 +110,7 @@ export class PublicationController {
           initialContent,
           finalContent,
           category,
+          published,
           images: imagesUrls,
           user: {
             id: user_id,
@@ -152,6 +155,7 @@ export class PublicationController {
         finalContent,
         category,
         images,
+        published,
         user_id,
       } = request.body;
       publication.name = name;
@@ -160,6 +164,7 @@ export class PublicationController {
       publication.finalContent = finalContent;
       publication.category = category;
       publication.images = images;
+      publication.published = published;
       publication.user.id = user_id;
       await this.publicationRepository.save(publication);
       return response.status(200).json(publication);

@@ -108,9 +108,6 @@ publicationRouter.post('/publications', validateReqSchema(
     body("initialContent").isString(),
     body("finalContent").isString(),
     body("category").isString(),
-    body("user_id")
-    .isInt({ min: 1 })
-    .withMessage("The minimum user_id must be positive integer"),
   ]), publicationController.save)
 publicationRouter.put('/publications/:slug', validateReqSchema([
     param("slug").isString(),
