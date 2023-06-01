@@ -25,6 +25,6 @@ export class User {
     @Column({ default: false })
     enabled: boolean
 
-    @OneToMany(() => Publication, publication => publication.user)
+    @OneToMany(() => Publication, publication => publication.user, { nullable: true })
     publications: Publication[]
 }

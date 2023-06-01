@@ -5,7 +5,7 @@ import { validateLogin } from './UserAuth';
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
-  async all(request: Request, response: Response, next: NextFunction) {
+  public all = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const users = await this.userRepository.find({
         where: {isAdmin: false},
@@ -22,69 +22,49 @@ export class UserController {
           }
         }
       });
-      return {
-        statusCode: 200,
-        data: users,
-      }
+      return response.status(200).json(users);
     } catch (error) {
-      return {
-        statusCode: 400,
-        data: {
-          message: 'Ha ocurrido un error obteniendo los Usuarios',
-          error: error.detail,
-        },
-      };
+      console.log(error)
+      return response.status(400).json({ message: 'Ha ocurrido un error obteniendo los Usuarios', error});
     }
   }
 
-  async one(request: Request, response: Response, next: NextFunction) {
+  public one = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const id = parseInt(request.params.id);
       const user = await this.userRepository.findOne({
         where: { id },
+        select: {
+          email: true,
+          name: true,
+          enabled: true
+        }
       });
       if (!user) {
-        return {
-          statusCode: 404,
-          data: { message: 'El usuario que se intenta buscar no existe' },
-        }
+        return response.status(404).json({ message: 'El usuario que se intenta buscar no existe'})
       } if (user.isAdmin === true) {
-        return {
-          statusCode: 401,
-          data: { message: 'No esta autorizado a ver este usuario' }
-        }
+        return response.status(401).json({ message: 'No esta autorizado a ver este usuario'})
       }
-      return {
-        statusCode: 200,
-        data: user,
-      }
+      return response.status(200).json(user)
     } catch (error) {
-      return {
-        statusCode: 400,
-        data: {
-          message: 'Ha ocurrido un error obteniendo al Usuario',
-          error: error.detail,
-        },
-      };
+      return response.status(400).json({ message: 'Ha ocurrido un error obteniendo al Usuario', error: error.detail})
     }
+  };
 
-
-  }
-
-  async checkAuth(request: Request, response: Response, next: NextFunction) {
+  public checkAuth = async (request: Request, response: Response, next: NextFunction) => {
     const email = request.body.email;
     const password = request.body.password;
     const user = await this.userRepository.findOne({
       where: { email },
     });
     if (!user) {
-      return "Error: unregistered user";
+      return response.status(401).json({ message: 'Error, no esta autorizado'});
     }
     const result = await validateLogin(user, password);
-    return result;
+    return response.status(200).json(result);
   }
 
-  async save(request: Request, response: Response, next: NextFunction) {
+  public save = async (request: Request, response: Response, next: NextFunction) => {
     const { firstName, lastName, age } = request.body;
     const user = Object.assign(new User(), {
       firstName,
@@ -97,39 +77,27 @@ export class UserController {
     return this.userRepository.save(user);
   }
 
-  async update(request: Request, response: Response, next: NextFunction) {
+  public update = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const id = parseInt(request.params.id);
       const user = await this.userRepository.findOne({
         where: { id },
+        select: {
+          id: true,
+          name: true,
+          enabled: true,
+        }
       });
       if (!user) {
-        return {
-          statusCode: 400,
-          data: {
-            message: 'El Usuario que se intenta actualizar no existe',
-          },
-        };
+        return response.status(404).json({ message: 'El Usuario que se intenta actualizar no existe'})
       }
-      const {
-        name,
-        enabled,
-      } = request.body;
+      const { name, enabled, } = request.body;
       user.name = name;
       user.enabled = enabled;
       await this.userRepository.save(user);
-      return {
-        statusCode: 200,
-        data: user,
-      };
+      return response.status(200).json(user)
     } catch (error) {
-      return {
-        statusCode: 400,
-        data: {
-          message: 'Ha ocurrido un error actualizando el Usuario',
-          error: error.detail,
-        },
-      };
+      return response.status(400).json({ message: 'Ha ocurrido un error actualizando el Usuario', error: error.detail })
     }
   }
 }
