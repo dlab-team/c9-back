@@ -115,8 +115,7 @@ publicationRouter.put('/publications/:slug', validateReqSchema([
     body("initialContent").isString(),
     body("finalContent").isString(),
     body("category").isString(),
-    body("images").isString(),
-    body("user_id")
+    body("user_id").optional()
     .isInt({ min: 1 })
     .withMessage("The minimum user_id must be positive integer"),
   ]) ,publicationController.update)
