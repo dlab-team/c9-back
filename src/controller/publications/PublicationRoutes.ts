@@ -100,8 +100,11 @@ import validateReqSchema from "../middlewares/validations"
  *          description: Publicación no encontrada.
  */
 
+// Validation: isAuthenticated
 publicationRouter.get('/publications', publicationController.all)
 publicationRouter.get('/publications/:slug', validateReqSchema([param("slug").isString()]), publicationController.one)
+
+// Validation: isAdmin
 publicationRouter.post('/publications', validateReqSchema(
     [body("name").isString(),
     body("slug").isString(),
