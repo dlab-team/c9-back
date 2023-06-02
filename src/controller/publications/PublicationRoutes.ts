@@ -104,7 +104,7 @@ import { isAdmin } from "../middlewares/isAdmin";
 
 // Validation: isAuthenticated
 publicationRouter.get('/publications', isAuthenticated, publicationController.all)
-publicationRouter.get('/publications/:slug', validateReqSchema([param("slug").isString()]), publicationController.one)
+publicationRouter.get('/publications/:slug', isAuthenticated, validateReqSchema([param("slug").isString()]), publicationController.one)
 
 // Validation: isAdmin
 publicationRouter.post('/publications', isAdmin, validateReqSchema(
@@ -114,7 +114,7 @@ publicationRouter.post('/publications', isAdmin, validateReqSchema(
     body("finalContent").isString(),
     body("category").isString(),
   ]), publicationController.save)
-publicationRouter.put('/publications/:slug', validateReqSchema([
+publicationRouter.put('/publications/:slug', isAdmin, validateReqSchema([
     param("slug").isString(),
     body("name").isString(),
     body("initialContent").isString(),
@@ -125,6 +125,6 @@ publicationRouter.put('/publications/:slug', validateReqSchema([
     .isInt({ min: 1 })
     .withMessage("The minimum user_id must be positive integer"),
   ]) ,publicationController.update)
-publicationRouter.delete('/publications/:slug', validateReqSchema([param("slug").isString()]) ,publicationController.remove)
+publicationRouter.delete('/publications/:slug', isAdmin, validateReqSchema([param("slug").isString()]) ,publicationController.remove)
 
 export default publicationRouter;
