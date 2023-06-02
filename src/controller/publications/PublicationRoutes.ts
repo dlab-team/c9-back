@@ -1,9 +1,9 @@
 import { PublicationController } from "./PublicationController";
 import { body, param } from "express-validator";
-const express = require('express')
+const express = require('express');
 const publicationRouter = express.Router();
 const publicationController = new PublicationController();
-import validateReqSchema from "../middlewares/validations"
+import validateReqSchema from "../middlewares/validations";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 import { isAdmin } from "../middlewares/isAdmin";
 
@@ -102,29 +102,29 @@ import { isAdmin } from "../middlewares/isAdmin";
  *          description: Publicación no encontrada.
  */
 
-// Validation: isAuthenticated
-publicationRouter.get('/publications', isAuthenticated, publicationController.all)
-publicationRouter.get('/publications/:slug', isAuthenticated, validateReqSchema([param("slug").isString()]), publicationController.one)
+// Validation: none
+publicationRouter.get('/publications', publicationController.all);
+publicationRouter.get('/publications/:slug', validateReqSchema([param("slug").isString()]), publicationController.one);
 
 // Validation: isAdmin
 publicationRouter.post('/publications', isAdmin, validateReqSchema(
-    [body("name").isString(),
-    body("slug").isString(),
-    body("initialContent").isString(),
-    body("finalContent").isString(),
-    body("category").isString(),
-  ]), publicationController.save)
+  [body("name").isString(),
+  body("slug").isString(),
+  body("initialContent").isString(),
+  body("finalContent").isString(),
+  body("category").isString(),
+  ]), publicationController.save);
 publicationRouter.put('/publications/:slug', isAdmin, validateReqSchema([
-    param("slug").isString(),
-    body("name").isString(),
-    body("initialContent").isString(),
-    body("finalContent").isString(),
-    body("category").isString(),
-    body("images").isString(),
-    body("user_id")
+  param("slug").isString(),
+  body("name").isString(),
+  body("initialContent").isString(),
+  body("finalContent").isString(),
+  body("category").isString(),
+  body("images").isString(),
+  body("user_id")
     .isInt({ min: 1 })
     .withMessage("The minimum user_id must be positive integer"),
-  ]) ,publicationController.update)
-publicationRouter.delete('/publications/:slug', isAdmin, validateReqSchema([param("slug").isString()]) ,publicationController.remove)
+]), publicationController.update);
+publicationRouter.delete('/publications/:slug', isAdmin, validateReqSchema([param("slug").isString()]), publicationController.remove);
 
 export default publicationRouter;

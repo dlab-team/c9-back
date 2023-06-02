@@ -14,8 +14,13 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 
    try {
       const decoded = jwt.verify(token, JWT_SECRET) as JWTData;
-      if (decoded.isAdmin) {
-         return next();
+      if (decoded.isAdmin === true) {
+         const currentTime = new Date().getTime();
+         if (currentTime <= decoded.exp) {
+            next();
+         } else {
+            return res.status(401).json({ message: 'Token expired' });
+         }
       }
       else {
          return res.status(403).json({ message: 'User is not authorized to perform this action' });

@@ -14,7 +14,12 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
 
    try {
       const decoded = jwt.verify(token, JWT_SECRET) as JWTData;
-      return next();
+      const currentTime = new Date().getTime();
+      if (currentTime <= decoded.exp) {
+         next();
+      } else {
+         return res.status(401).json({ message: 'Token expired' });
+      }
    } catch (err) {
       res.status(401).json({ message: 'Token is not valid' });
    }
