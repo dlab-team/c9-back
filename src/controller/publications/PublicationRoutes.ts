@@ -4,6 +4,8 @@ const express = require('express')
 const publicationRouter = express.Router();
 const publicationController = new PublicationController();
 import validateReqSchema from "../middlewares/validations"
+import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { isAdmin } from "../middlewares/isAdmin";
 
 /**
  * Publicaciones
@@ -101,11 +103,11 @@ import validateReqSchema from "../middlewares/validations"
  */
 
 // Validation: isAuthenticated
-publicationRouter.get('/publications', publicationController.all)
+publicationRouter.get('/publications', isAuthenticated, publicationController.all)
 publicationRouter.get('/publications/:slug', validateReqSchema([param("slug").isString()]), publicationController.one)
 
 // Validation: isAdmin
-publicationRouter.post('/publications', validateReqSchema(
+publicationRouter.post('/publications', isAdmin, validateReqSchema(
     [body("name").isString(),
     body("slug").isString(),
     body("initialContent").isString(),
