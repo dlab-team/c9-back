@@ -113,6 +113,7 @@ publicationRouter.post('/publications', isAdmin, validateReqSchema(
   body("initialContent").isString(),
   body("finalContent").isString(),
   body("category").isString(),
+  body("user_id").optional(),
   ]), publicationController.save);
 publicationRouter.put('/publications/:slug', isAdmin, validateReqSchema([
   param("slug").isString(),
@@ -120,8 +121,7 @@ publicationRouter.put('/publications/:slug', isAdmin, validateReqSchema([
   body("initialContent").isString(),
   body("finalContent").isString(),
   body("category").isString(),
-  body("images").isString(),
-  body("user_id")
+  body("user_id").optional()
     .isInt({ min: 1 })
     .withMessage("The minimum user_id must be positive integer"),
 ]), publicationController.update);

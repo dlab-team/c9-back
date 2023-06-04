@@ -110,7 +110,7 @@ export class PublicationController {
           initialContent,
           finalContent,
           category,
-          published,
+          published: published ? JSON.parse(published) : undefined,
           images: imagesUrls,
           user: {
             id: user_id,
@@ -154,18 +154,18 @@ export class PublicationController {
         initialContent,
         finalContent,
         category,
-        images,
-        published,
-        user_id,
       } = request.body;
-      publication.name = name;
-      publication.slug = slug;
-      publication.initialContent = initialContent;
-      publication.finalContent = finalContent;
-      publication.category = category;
-      publication.images = images;
-      publication.published = published;
-      publication.user.id = user_id;
+      const userId = request.body.user_id ? Number(request.body.user_id) : undefined
+      const published = request.body.published? JSON.parse(request.body.published) : undefined
+      let imagesUrls: string[];
+      if(request.files) {
+        const imagesUploaderService = new ImagesUploader();
+        imagesUrls = await imagesUploaderService.uploadImages(request.files.images);
+      }
+      
+      this.publicationRepository.merge(publication, { 
+        name, slug, initialContent, finalContent, category, images: imagesUrls, published, user: {id: userId  }
+      });
       await this.publicationRepository.save(publication);
       return response.status(200).json(publication);
     } catch (error) {
