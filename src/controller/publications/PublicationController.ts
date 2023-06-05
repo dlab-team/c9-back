@@ -200,4 +200,15 @@ export class PublicationController {
       return response.status(400).json({ message: 'Ha ocurrido un error eliminando una pregunta con su respuesta', error: error.detail,});
     }
   }
+
+  public publishOrUnpublish = async (request: Request, response: Response, next: NextFunction) => {
+    const publicationsIds: number[] = request.body.publicationsIdsToUpdate
+    const isPublished = request.body.isPublished
+    try { 
+      await this.publicationRepository.update( publicationsIds, {published: isPublished})
+      return response.status(200).json({ message: 'Las publicaciones se han actualizado correctamente'});
+    } catch (error) {
+      return response.status(400).json({ message: 'Ha ocurrido un error actualizando las publicaciones', error: error.detail,});
+    }
+  }
 }
