@@ -115,6 +115,12 @@ publicationRouter.post('/publications', isAdmin, validateReqSchema(
   body("category").isString(),
   body("user_id").optional(),
   ]), publicationController.save);
+
+publicationRouter.put('/publications/published', isAuthenticated, validateReqSchema([
+  body("publicationsIdsToUpdate").isArray({ min: 1 }),
+  body("isPublished").isBoolean(),
+]), publicationController.publishOrUnpublish);
+
 publicationRouter.put('/publications/:slug', isAdmin, validateReqSchema([
   param("slug").isString(),
   body("name").isString(),
