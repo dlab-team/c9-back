@@ -1,7 +1,7 @@
 import { User } from "../../entity/User";
 
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import bcrypt = require('bcryptjs');
+import jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 type JWTData = {
