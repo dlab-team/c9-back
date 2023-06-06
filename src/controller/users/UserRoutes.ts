@@ -1,9 +1,9 @@
-import { UserController } from './UserController';
+import { UserController } from "./UserController";
 import { body, param } from "express-validator";
-const express = require('express')
+const express = require("express");
 const userRouter = express.Router();
 const userController = new UserController();
-import validationReqSchema from '../middlewares/validations';
+import validationReqSchema from "../middlewares/validations";
 
 /**
  * @swagger
@@ -114,22 +114,40 @@ import validationReqSchema from '../middlewares/validations';
  *          description: Devuelve un JWT con los datos del usuario.
  */
 
-userRouter.get('/users', userController.all)
-userRouter.get('/users/:id', validationReqSchema([param("id").isInt()]),userController.one)
-userRouter.post('/post', validationReqSchema([
+userRouter.get("/users", userController.all);
+userRouter.get(
+  "/users/:id",
+  validationReqSchema([param("id").isInt()]),
+  userController.one
+);
+userRouter.post(
+  "/users",
+  validationReqSchema([
     body("firstName").isString(),
     body("lastName").isString(),
     body("age")
       .isInt({ min: 0 })
       .withMessage("The minimum age must be positive integer"),
-  ]), userController.save)
-userRouter.post('/users/auth', validationReqSchema([
-    body("email").isString(),
-    body("password").isString(),
-  ]) ,userController.checkAuth)
-userRouter.put('/users/:id', validationReqSchema([
-    body("name").isString(),
-    body("enabled").isBoolean(),
-  ]) ,userController.update)
+  ]),
+  userController.save
+);
+userRouter.post(
+  "/users/auth",
+  validationReqSchema([body("email").isString(), body("password").isString()]),
+  userController.checkAuth
+),
+  userRouter.post(
+    "/users/confirm",
+    validationReqSchema([
+      body("password").isString().withMessage("Password must be a string"),
+      body("token").isString().withMessage("Token must be a string"),
+    ]),
+    userController.confirm
+  ),
+  userRouter.put(
+    "/users/:id",
+    validationReqSchema([body("name").isString(), body("enabled").isBoolean()]),
+    userController.update
+  );
 
 export default userRouter;

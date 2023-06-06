@@ -75,6 +75,9 @@ const swaggerDefinition: OAS3Definition = {
             type: "integer",
             format: "int64",
           },
+          published: {
+            type: "boolean",
+          },
         },
       },
       Questions: {
