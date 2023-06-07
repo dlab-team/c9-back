@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { User } from '../../entity/User';
 import { validateLogin } from './UserAuth';
 import sendEmail from '../../config/email';
-import jwt from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 const secretKey = process.env.JWT_SECRET;
 
 export class UserController {
@@ -111,7 +111,7 @@ export class UserController {
     try {
       const savedUser = await this.userRepository.save(user);
       // genero token
-      const token = jwt.sign({ userId: savedUser.id }, secretKey);
+      const token = sign({ userId: savedUser.id }, secretKey);
       // URL de confirmación con el token como parámetro
       const confirmationUrl = `${process.env.FRONT_URL}/confirm?token=${token}`;
 
@@ -139,7 +139,7 @@ export class UserController {
     const { password, token } = request.body;
     try {
       //verifico token
-      const decode = jwt.verify(token, secretKey);
+      const decode = verify(token, secretKey);
       //obtengo el usuario basado en el ID del token
       const user = await this.userRepository.findOne(decode.userId);
       //si no existe el usuario
