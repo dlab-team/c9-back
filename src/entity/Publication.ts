@@ -36,8 +36,11 @@ export class Publication {
     @Column('simple-array', { nullable: true})
     images: string[]
 
-    @ManyToOne(() => User, user => user.publications)
-    @JoinColumn({ name: 'user_id'})
+    @Column({ default: false})
+    published: boolean
+
+    @ManyToOne(() => User, user => user.publications, { nullable: true, })
+    @JoinColumn({ name: 'user_id',})
     user: User
 
     @OneToMany(() => Question, question => question.publication)

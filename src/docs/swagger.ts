@@ -4,7 +4,7 @@ import { OAS3Options, OAS3Definition } from "swagger-jsdoc";
 const swaggerDefinition: OAS3Definition = {
   openapi: "3.0.0",
   info: {
-    title: "PROYECO C9-INCUBADORA DESAFIO LATAM",
+    title: "PROYECTO C9-INCUBADORA DESAFIO LATAM",
     version: "1.0.0",
     description: "C9 API",
   },
@@ -74,6 +74,9 @@ const swaggerDefinition: OAS3Definition = {
           user_id: {
             type: "integer",
             format: "int64",
+          },
+          published: {
+            type: "boolean",
           },
         },
       },

@@ -16,6 +16,15 @@ export class User {
     @Column()
     password: string
 
-    @OneToMany(() => Publication, publication => publication.user)
+    @Column({ default: false })
+    isAdmin: boolean
+
+    @Column({ nullable: true})
+    token: string
+
+    @Column({ default: false })
+    enabled: boolean
+
+    @OneToMany(() => Publication, publication => publication.user, { nullable: true })
     publications: Publication[]
 }

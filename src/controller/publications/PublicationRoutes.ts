@@ -1,5 +1,11 @@
 import { PublicationController } from "./PublicationController";
 import { body, param } from "express-validator";
+const express = require('express');
+const publicationRouter = express.Router();
+const publicationController = new PublicationController();
+import validateReqSchema from "../middlewares/validations";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { isAdmin } from "../middlewares/isAdmin";
 
 /**
  * Publicaciones
@@ -96,60 +102,35 @@ import { body, param } from "express-validator";
  *          description: Publicación no encontrada.
  */
 
-export const publicationRoutes = [
-  {
-    method: "get",
-    route: "/publications/:slug",
-    controller: PublicationController,
-    action: "one",
-    validation: [param("slug").isString()],
-  },
-  {
-    method: "get",
-    route: "/publications",
-    controller: PublicationController,
-    action: "all",
-    validation: [],
-  },
-  {
-    method: "post",
-    route: "/publications",
-    controller: PublicationController,
-    action: "save",
-    validation: [
-      body("name").isString(),
-      body("slug").isString(),
-      body("initialContent").isString(),
-      body("finalContent").isString(),
-      body("category").isString(),
-      body("images").isString(),
-      body("user_id")
-        .isInt({ min: 1 })
-        .withMessage("The minimum user_id must be positive integer"),
-    ],
-  },
-  {
-    method: "put",
-    route: "/publications/:slug",
-    controller: PublicationController,
-    action: "update",
-    validation: [
-      param("slug").isString(),
-      body("name").isString(),
-      body("initialContent").isString(),
-      body("finalContent").isString(),
-      body("category").isString(),
-      body("images").isString(),
-      body("user_id")
-        .isInt({ min: 1 })
-        .withMessage("The minimum user_id must be positive integer"),
-    ],
-  },
-  {
-    method: "delete",
-    route: "/publications/:slug",
-    controller: PublicationController,
-    action: "remove",
-    validation: [param("slug").isString()],
-  },
-];
+// Validation: none
+publicationRouter.get('/publications', publicationController.all);
+publicationRouter.get('/publications/:slug', validateReqSchema([param("slug").isString()]), publicationController.one);
+
+// Validation: isAdmin
+publicationRouter.post('/publications', isAdmin, validateReqSchema(
+  [body("name").isString(),
+  body("slug").isString(),
+  body("initialContent").isString(),
+  body("finalContent").isString(),
+  body("category").isString(),
+  body("user_id").optional(),
+  ]), publicationController.save);
+
+publicationRouter.put('/publications/published', isAuthenticated, validateReqSchema([
+  body("publicationsIdsToUpdate").isArray({ min: 1 }),
+  body("isPublished").isBoolean(),
+]), publicationController.publishOrUnpublish);
+
+publicationRouter.put('/publications/:slug', isAdmin, validateReqSchema([
+  param("slug").isString(),
+  body("name").isString(),
+  body("initialContent").isString(),
+  body("finalContent").isString(),
+  body("category").isString(),
+  body("user_id").optional()
+    .isInt({ min: 1 })
+    .withMessage("The minimum user_id must be positive integer"),
+]), publicationController.update);
+publicationRouter.delete('/publications/:slug', isAdmin, validateReqSchema([param("slug").isString()]), publicationController.remove);
+
+export default publicationRouter;

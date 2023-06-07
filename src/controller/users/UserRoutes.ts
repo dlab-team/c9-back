@@ -1,5 +1,9 @@
 import { UserController } from "./UserController";
 import { body, param } from "express-validator";
+const express = require("express");
+const userRouter = express.Router();
+const userController = new UserController();
+import validationReqSchema from "../middlewares/validations";
 
 /**
  * @swagger
@@ -85,34 +89,65 @@ import { body, param } from "express-validator";
  *          description: El usuario ha sido eliminado exitosamente.
  *        '404':
  *          description: Usuario no encontrado.
+ * /users/auth:
+ *    post:
+ *      tags:
+ *        - usuarios
+ *      summary: Autentica un usuario
+ *      description: Este endpoint se utiliza para autenticar un usuario contra la base de datos.
+ *      requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                email:
+ *                  type: string
+ *                password:
+ *                  type: string
+ *      responses:
+ *        '400':
+ *          description: El usuario no existe en la base de datos.
+ *        '422':
+ *          description: Error de validación.
+ *        '200':
+ *          description: Devuelve un JWT con los datos del usuario.
  */
 
-export const userRoutes = [
-  {
-    method: "get",
-    route: "/users",
-    controller: UserController,
-    action: "all",
-    validation: [],
-  },
-  {
-    method: "get",
-    route: "/users/:id",
-    controller: UserController,
-    action: "one",
-    validation: [param("id").isInt()],
-  },
-  {
-    method: "post",
-    route: "/users",
-    controller: UserController,
-    action: "save",
-    validation: [
-      body("firstName").isString(),
-      body("lastName").isString(),
-      body("age")
-        .isInt({ min: 0 })
-        .withMessage("The minimum age must be positive integer"),
-    ],
-  },
-];
+userRouter.get("/users", userController.all);
+userRouter.get(
+  "/users/:id",
+  validationReqSchema([param("id").isInt()]),
+  userController.one
+);
+userRouter.post(
+  "/users",
+  validationReqSchema([
+    body("firstName").isString(),
+    body("lastName").isString(),
+    body("age")
+      .isInt({ min: 0 })
+      .withMessage("The minimum age must be positive integer"),
+  ]),
+  userController.save
+);
+userRouter.post(
+  "/users/auth",
+  validationReqSchema([body("email").isString(), body("password").isString()]),
+  userController.checkAuth
+),
+  userRouter.post(
+    "/users/confirm",
+    validationReqSchema([
+      body("password").isString().withMessage("Password must be a string"),
+      body("token").isString().withMessage("Token must be a string"),
+    ]),
+    userController.confirm
+  ),
+  userRouter.put(
+    "/users/:id",
+    validationReqSchema([body("name").isString(), body("enabled").isBoolean()]),
+    userController.update
+  );
+
+export default userRouter;

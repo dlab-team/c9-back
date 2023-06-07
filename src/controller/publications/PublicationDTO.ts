@@ -20,12 +20,12 @@ export function asDTO(response: any): { publication: any } {
     initialContent,
     finalContent,
     images,
+    published,
     category,
     createdAt,
     user,
     questions,
   } = response;
-
   const date = new Date(createdAt);
   const year = date.getFullYear();
   const month = date.getMonth() + 1; // Los meses en JavaScript comienzan en 0, por lo que debemos sumar 1
@@ -33,19 +33,19 @@ export function asDTO(response: any): { publication: any } {
   const publicationDate = `${year}/${month.toString().padStart(2, "0")}/${day
     .toString()
     .padStart(2, "0")}`;
-
   const publication = {
     id,
     name,
     slug,
     initialContent,
     finalContent,
-    images: images.map((image: string) => ({ url: image })),
+    images: images ? images.map((image: string) => ({ url: image })) : null,
+    published,
     publicationDate,
     category,
     region: "Metropolitana", // TODO: Add region to publication
     city: "Santiago", // TODO: Add city to publication
-    author: user.name,
+    author: user ? user.name : "No asignado",
     questions: questions.map(
       (question: { question: string; answer: string }) => ({
         question: question.question,

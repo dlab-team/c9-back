@@ -4,11 +4,12 @@ import * as cors from "cors";
 import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 import { AppDataSource } from "./data-source";
-import { Routes } from "./routes";
 import * as morgan from "morgan";
-import { validationResult } from "express-validator";
 import * as swaggerUi from "swagger-ui-express";
 import swaggerDoc from "./docs/swagger";
+import fileUpload = require("express-fileupload");
+import registerRouter from "./routes";
+
 
 function handleError(err, req, res, next) {
   res.status(err.statusCode || 500).send({ message: err.message });
@@ -21,6 +22,12 @@ AppDataSource.initialize()
     app.use(cors());
     app.use(morgan("tiny"));
     app.use(bodyParser.json());
+    app.use(fileUpload({ 
+      createParentPath: true, 
+      useTempFiles: true,
+    }));
+    //puede no ser necesario cuando Azure este disponible
+    app.use("/public/images", express.static(`public/files/images`));
 
     app.get("/", function (req: Request, res: Response) {
       res.send({
@@ -29,37 +36,9 @@ AppDataSource.initialize()
           "Incubadora Desafío Latam Célula c9 junto a Microsoft y El Mercurio",
       });
     });
-
-    // register express routes from defined application routes
-    Routes.forEach((route) => {
-      (app as any)[route.method](
-        route.route,
-        ...route.validation,
-        async (req: Request, res: Response, next: Function) => {
-          try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-              return res.status(400).json({ errors: errors.array() });
-            }
-            const result = await new (route.controller as any)()[route.action](
-              req,
-              res,
-              next
-            );
-            if (result.statusCode && result.data) {
-              const { statusCode, data } = result;
-              return res.status(statusCode).json(data);
-            }
-            return res.status(200).json(result)
-          } catch (error) {
-            next(error);
-          }
-        }
-      );
-    }); // start express server
-
     app.use("/documentation", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
     app.use(handleError);
+    registerRouter(app)
     app.listen(process.env.PORT);
 
     console.log(`Express server has started on port ${process.env.PORT}.`);

@@ -1,6 +1,9 @@
-import { publicationRoutes } from './controller/publications/PublicationRoutes';
-import { questionRoutes } from './controller/questions/QuestionRoutes';
-import { userRoutes } from './controller/users/UserRoutes';
+import publicationRouter from "./controller/publications/PublicationRoutes";
+import questionRouter from "./controller/questions/QuestionRoutes";
+import userRouter from "./controller/users/UserRoutes";
 
+export const Routes = [publicationRouter, questionRouter, userRouter]
 
-export const Routes = [...userRoutes,...publicationRoutes,...questionRoutes];
+export default function registerRouter (app: any) {
+    Routes.map((router) => {app.use(router)})
+}
