@@ -104,11 +104,7 @@ import { isAdmin } from '../middlewares/isAdmin';
 
 // Validation: none
 publicationRouter.get('/publications', publicationController.allPublished);
-publicationRouter.get(
-  '/admin_publications',
-  isAuthenticated,
-  publicationController.all
-);
+publicationRouter.get('/admin_publications', publicationController.all);
 publicationRouter.get(
   '/publications/:slug',
   validateReqSchema([param('slug').isString()]),
