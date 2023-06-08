@@ -80,6 +80,39 @@ export class PublicationController {
     }
   };
 
+  public allPublished = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const publications = await this.publicationRepository.find({
+        where: { user: true || false, published: true },
+        relations: {
+          user: true,
+          questions: true,
+        },
+        select: {
+          user: {
+            name: true,
+          },
+          questions: {
+            question: true,
+            answer: true,
+          },
+        },
+      });
+      const publicationDTOs = asDTOs(publications);
+      return response.status(200).json(publicationDTOs);
+    } catch (error) {
+      console.log(error);
+      return response.status(400).json({
+        message: 'Ha ocurrido un error obteniendo las Publicaciones',
+        error: error.detail,
+      });
+    }
+  };
+
   /**
    * Crea y guarda una nueva publicación en la base de datos.
    * @param request - La solicitud HTTP que contiene los datos de la publicación.
