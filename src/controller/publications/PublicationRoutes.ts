@@ -118,7 +118,7 @@ publicationRouter.get(
 // Validation: isAdmin
 publicationRouter.post(
   '/publications',
-  isAdmin,
+  isAuthenticated,
   validateReqSchema([
     body('name').isString(),
     body('slug').isString(),
@@ -142,7 +142,7 @@ publicationRouter.put(
 
 publicationRouter.put(
   '/publications/:slug',
-  isAdmin,
+  isAuthenticated,
   validateReqSchema([
     param('slug').isString(),
     body('name').isString(),
@@ -158,7 +158,7 @@ publicationRouter.put(
 );
 publicationRouter.delete(
   '/publications/:slug',
-  isAdmin,
+  isAuthenticated,
   validateReqSchema([param('slug').isString()]),
   publicationController.remove
 );
