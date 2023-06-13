@@ -1,51 +1,62 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany, CreateDateColumn } from "typeorm";
-import { User } from "./User";
-import { Question } from "./Questions";
-import { Region } from "./Region";
-import { City } from "./City";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
+import { User } from './User';
+import { Question } from './Questions';
+import { Region } from './Region';
+import { City } from './City';
 
 export enum CategoryTypes {
   TECNOLOGIA = 'Tecnología',
   CIENCIA = 'Ciencia',
   ENTRETENIMIENTO = 'Entretenimiento',
   ESPACIO = 'Espacio',
-  GENERAL = 'General'
+  GENERAL = 'General',
 }
 
 @Entity('publications')
 export class Publication {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column({ unique: true })
-  name: string
+  name: string;
 
   @Column()
-  slug: string
+  slug: string;
 
   @Column({ type: 'text' })
-  initialContent: string
+  initialContent: string;
 
   @Column({ type: 'text' })
-  finalContent: string
+  finalContent: string;
 
   @CreateDateColumn()
-  createdAt: Date
+  createdAt: Date;
 
   @Column({ type: 'enum', enum: CategoryTypes, default: CategoryTypes.GENERAL })
-  category: CategoryTypes
+  category: CategoryTypes;
 
   @Column('simple-array', { nullable: true })
-  images: string[]
+  images: string[];
 
-  @ManyToOne(() => User, user => user.publications)
+  @Column({ default: false })
+  published: boolean;
+
+  @ManyToOne(() => User, (user) => user.publications, { nullable: true })
   @JoinColumn({ name: 'user_id' })
-  user: User
+  user: User;
 
-  @OneToMany(() => Question, question => question.publication)
-  questions: Question[]
+  @OneToMany(() => Question, (question) => question.publication)
+  questions: Question[];
 
-  @JoinColumn({ name: 'city_id'})
-  @ManyToOne(() => City, (city) => city.publications)
-  city: City
+  @ManyToOne(() => City, (city) => city.publications, { nullable: true })
+  @JoinColumn({ name: 'city_id' })
+  city: City;
 }

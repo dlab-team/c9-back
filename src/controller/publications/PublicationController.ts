@@ -170,12 +170,6 @@ export class PublicationController {
           user: {
             id: user_id,
           },
-          region: {
-            name: "Arica"
-        },
-        city: {
-            name: "Arica"
-        },
         });
         const result = await this.publicationRepository.save(publication);
 
