@@ -11,7 +11,9 @@ import { User } from './User';
 import { Question } from './Questions';
 import { Region } from './Region';
 import { City } from './City';
+import { Category } from './Category';
 
+/*
 export enum CategoryTypes {
   TECNOLOGIA = 'Tecnología',
   CIENCIA = 'Ciencia',
@@ -19,6 +21,7 @@ export enum CategoryTypes {
   ESPACIO = 'Espacio',
   GENERAL = 'General',
 }
+*/
 
 @Entity('publications')
 export class Publication {
@@ -40,8 +43,9 @@ export class Publication {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ type: 'enum', enum: CategoryTypes, default: CategoryTypes.GENERAL })
-  category: CategoryTypes;
+  @ManyToOne(() => Category, (category) => category.publications, { nullable: true })
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
 
   @Column('simple-array', { nullable: true })
   images: string[];
