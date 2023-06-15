@@ -10,5 +10,5 @@ export class Region {
   name: string;
 
   @OneToMany(() => City, (city) => city.region)
-  citys: City[]
+  cities: City[]
 }
