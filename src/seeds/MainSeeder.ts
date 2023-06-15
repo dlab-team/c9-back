@@ -4,11 +4,18 @@ import { PublicationSeeder } from "./PublicationSeeder";
 import { QuestionSeeder } from "./QuestionSeeder";
 import { UserSeeder } from "./UserSeeder";
 import { CategorySeeder } from "./CategorySeeder";
+import { RegionSeeder } from "./regionSeeder";
+import { CitySeeder } from "./citySeeder";
 export class MainSeeder implements Seeder {
-    async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
-        await runSeeder(dataSource, UserSeeder)
-        await runSeeder(dataSource, CategorySeeder)
-        await runSeeder(dataSource, PublicationSeeder)
-        await runSeeder(dataSource, QuestionSeeder)
-    }
+  async run(
+    dataSource: DataSource,
+    factoryManager: SeederFactoryManager
+  ): Promise<any> {
+    await runSeeder(dataSource, UserSeeder);
+    await runSeeder(dataSource, CategorySeeder);
+    await runSeeder(dataSource, PublicationSeeder);
+    await runSeeder(dataSource, QuestionSeeder);
+    await runSeeder(dataSource, RegionSeeder);
+    await runSeeder(dataSource, CitySeeder);
+  }
 }
