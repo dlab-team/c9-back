@@ -10,11 +10,7 @@ export class City {
   @Column()
   name: string;
 
-  @ManyToOne(() => Region, (region) => region.city)
+  @ManyToOne(() => Region, (region) => region.citys)
   @JoinColumn({ name: 'region_id'})
-  region: Region
-
-  @OneToMany(() => Publication, (publication) => publication.city)
-  publications: Publication[]
-
+  region: Region;
 }

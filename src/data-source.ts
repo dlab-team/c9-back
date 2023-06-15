@@ -12,7 +12,7 @@ const options: DataSourceOptions & SeederOptions = {
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    synchronize: true,
+    synchronize: false,
     logging: false,
     entities: [`${__dirname}/**/entity/*.ts`],
     migrations: [`${__dirname}/**/migration/*.ts`],

@@ -9,19 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './User';
 import { Question } from './Questions';
-import { Region } from './Region';
-import { City } from './City';
 import { Category } from './Category';
-
-/*
-export enum CategoryTypes {
-  TECNOLOGIA = 'Tecnología',
-  CIENCIA = 'Ciencia',
-  ENTRETENIMIENTO = 'Entretenimiento',
-  ESPACIO = 'Espacio',
-  GENERAL = 'General',
-}
-*/
 
 @Entity('publications')
 export class Publication {
@@ -45,7 +33,8 @@ export class Publication {
 
   @ManyToOne(() => Category, (category) => category.publications, { nullable: true })
   @JoinColumn({ name: 'category_id' })
-  category: Category;
+  category: Category
+
 
   @Column('simple-array', { nullable: true })
   images: string[];
@@ -60,7 +49,9 @@ export class Publication {
   @OneToMany(() => Question, (question) => question.publication)
   questions: Question[];
 
-  @ManyToOne(() => City, (city) => city.publications, { nullable: true })
-  @JoinColumn({ name: 'city_id' })
-  city: City;
+  @Column({ type: 'json', nullable: true})
+  location: {
+      regionId: number,
+      cityId: number | null
+  }
 }
