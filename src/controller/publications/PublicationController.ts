@@ -1,8 +1,10 @@
 import { AppDataSource } from '../../data-source';
 import { NextFunction, Request, Response } from 'express';
 import { Publication } from '../../entity/Publication';
-import { asDTO, asDTOs } from './PublicationDTO';
+import { asDTO, asDTOs, LocationFullInfo } from './PublicationDTO';
 import { ImagesUploader } from '../../services/ImagesUploader';
+import { Region } from '../../entity/Region';
+import { City } from '../../entity/City';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -18,6 +20,7 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
+          category: true,
         },
         select: {
           user: {
@@ -30,7 +33,21 @@ export class PublicationController {
           .status(404)
           .json({ message: 'La publicación que se intenta buscar no existe' });
       }
-      const publicationDTO = asDTO(publication);
+
+      let locationFullInfo: LocationFullInfo = null;
+      if (publication.location) {
+        const region = await AppDataSource.getRepository(Region).findOneBy({
+          id: publication.location.regionId
+        });
+        const city = publication.location.cityId
+          ? await AppDataSource.getRepository(City).findOneBy({
+              id: publication.location.cityId
+            })
+          : null;
+        locationFullInfo = { region, city };
+      }
+
+      const publicationDTO = asDTO({ ...publication, locationFullInfo });
       return response.status(200).json(publicationDTO);
     } catch (error) {
       return response.status(400).json({
@@ -138,58 +155,44 @@ export class PublicationController {
         slug,
         initialContent,
         finalContent,
-        category,
         published,
         user_id,
       } = request.body;
-      if (user_id) {
-        const publication = this.publicationRepository.create({
-          name,
-          slug,
-          initialContent,
-          finalContent,
-          category,
-          published,
-          images: imagesUrls,
-          user: {
-            id: user_id,
+      const locationParse = request.body.location ? JSON.parse(request.body.location): undefined
+      const location = locationParse ? { regionId: locationParse.region.id, cityId: locationParse.city?.id || null } : undefined
+      const category = request.body.category ? JSON.parse(request.body.category) : undefined
+      const user  = user_id ? { id: user_id}: { id: null }
+
+      const publication = this.publicationRepository.create({
+        name,
+        slug,
+        initialContent,
+        finalContent,
+        category,
+        location,
+        published: published ? JSON.parse(published) : undefined,
+        images: imagesUrls,
+        user
+      });
+
+      const result = await this.publicationRepository.save(publication);
+
+      // guardar preguntas asociadas
+      const preQuestions = JSON.parse(request.body.questions);
+      const questions = preQuestions.map((question: any) => {
+        return {
+          question: question.question,
+          answer: question.answer,
+          publication: {
+            id: result.id,
           },
-        });
-        const result = await this.publicationRepository.save(publication);
-        return response.status(201).json(result);
-      } else {
-        const user_id = null;
-        const publication = this.publicationRepository.create({
-          name,
-          slug,
-          initialContent,
-          finalContent,
-          category,
-          published: published ? JSON.parse(published) : undefined,
-          images: imagesUrls,
-          user: {
-            id: user_id,
-          },
-        });
-        const result = await this.publicationRepository.save(publication);
+        };
+      });
 
-        // guardar preguntas asociadas
-        const preQuestions = JSON.parse(request.body.questions);
-        const questions = preQuestions.map((question: any) => {
-          return {
-            question: question.question,
-            answer: question.answer,
-            publication: {
-              id: result.id,
-            },
-          };
-        });
+      // insertarlos nuevamente
+      await AppDataSource.getRepository('Question').save(questions);
 
-        // insertarlos nuevamente
-        await AppDataSource.getRepository('Question').save(questions);
-
-        return response.status(201).json(result);
-      }
+      return response.status(201).json(result);
     } catch (error) {
       return response.status(400).json({
         message: 'Ha ocurrido un error creando una nueva Publicación',
@@ -217,6 +220,7 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
+          category:true
         },
         select: {
           user: {
@@ -229,7 +233,7 @@ export class PublicationController {
           message: 'La publicación que se intenta actualizar no existe',
         });
       }
-      const { name, slug, initialContent, finalContent, category } =
+      const { name, slug, initialContent, finalContent } =
         request.body;
       const userId = request.body.user_id
         ? Number(request.body.user_id)
@@ -237,6 +241,10 @@ export class PublicationController {
       const published = request.body.published
         ? JSON.parse(request.body.published)
         : undefined;
+      const locationParse = request.body.location ? JSON.parse(request.body.location): undefined
+      const location = locationParse ? { regionId: locationParse.region.id, cityId: locationParse.city?.id || null } : undefined
+      const category = request.body.category ? JSON.parse(request.body.category) : undefined
+
       let imagesUrls: string[];
       if (request.files) {
         const imagesUploaderService = new ImagesUploader();
@@ -251,6 +259,7 @@ export class PublicationController {
         initialContent,
         finalContent,
         category,
+        location,
         images: imagesUrls,
         published,
         // user: { id: userId },

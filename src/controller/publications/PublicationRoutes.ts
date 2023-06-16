@@ -120,7 +120,6 @@ publicationRouter.post(
     body('slug').isString(),
     body('initialContent').isString(),
     body('finalContent').isString(),
-    body('category').isString(),
     body('user_id').optional(),
   ]),
   publicationController.save
@@ -144,7 +143,6 @@ publicationRouter.put(
     body('name').isString(),
     body('initialContent').isString(),
     body('finalContent').isString(),
-    body('category').isString(),
     body('user_id')
       .optional()
       .isInt({ min: 1 })
