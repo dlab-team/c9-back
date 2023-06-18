@@ -71,6 +71,9 @@ export class PublicationController {
             answer: true,
           },
         },
+        order: {
+          createdAt: "DESC",
+        },
       });
       const publicationDTOs = asDTOs(publications);
       return response.status(200).json(publicationDTOs);
