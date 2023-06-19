@@ -1,11 +1,15 @@
 import { AppDataSource } from '../../data-source';
 import { NextFunction, Request, Response } from 'express';
 import { Publication } from '../../entity/Publication';
-import { asDTO, asDTOs } from './PublicationDTO';
+import { asDTO, asDTOs, LocationFullInfo } from './PublicationDTO';
 import { ImagesUploader } from '../../services/ImagesUploader';
+import { Region } from '../../entity/Region';
+import { City } from '../../entity/City';
+import { Category } from '../../entity/Category';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
+
   public one = async (
     request: Request,
     response: Response,
@@ -18,6 +22,7 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
+          category: true,
         },
         select: {
           user: {
@@ -30,7 +35,30 @@ export class PublicationController {
           .status(404)
           .json({ message: 'La publicación que se intenta buscar no existe' });
       }
-      const publicationDTO = asDTO(publication);
+
+      let locationFullInfo: LocationFullInfo = null;
+      if (publication.location) {
+        const region = await AppDataSource.getRepository(Region).findOneBy({
+          id: publication.location.regionId,
+        });
+        const city = publication.location.cityId
+          ? await AppDataSource.getRepository(City).findOneBy({
+              id: publication.location.cityId,
+            })
+          : null;
+        locationFullInfo = { region, city };
+      }
+
+      // TODO: Agregar imágenes dummy si es que images es vacio
+      if (publication.images.length === 0) {
+        for (let i = 0; i < 3; i++) {
+          const randomId = Math.floor(Math.random() * 1000) + 1;
+          const imageUrl = `https://picsum.photos/1200/800?random=${randomId}`;
+          publication.images.push(imageUrl);
+        }
+      }
+
+      const publicationDTO = asDTO({ ...publication, locationFullInfo });
       return response.status(200).json(publicationDTO);
     } catch (error) {
       return response.status(400).json({
@@ -67,6 +95,9 @@ export class PublicationController {
             question: true,
             answer: true,
           },
+        },
+        order: {
+          createdAt: 'DESC',
         },
       });
       const publicationDTOs = asDTOs(publications);
@@ -133,63 +164,53 @@ export class PublicationController {
       );
     }
     try {
-      const {
+      const { name, slug, initialContent, finalContent, published, user_id } =
+        request.body;
+      const locationParse =
+        request.body.location && request.body.location.region.id != null
+          ? JSON.parse(request.body.location)
+          : undefined;
+      const location = locationParse
+        ? {
+            regionId: locationParse.region.id,
+            cityId: locationParse.city?.id || null,
+          }
+        : undefined;
+      const category = request.body.category
+        ? JSON.parse(request.body.category)
+        : undefined;
+      const user = user_id ? { id: user_id } : { id: null };
+
+      const publication = this.publicationRepository.create({
         name,
         slug,
         initialContent,
         finalContent,
         category,
-        published,
-        user_id,
-      } = request.body;
-      if (user_id) {
-        const publication = this.publicationRepository.create({
-          name,
-          slug,
-          initialContent,
-          finalContent,
-          category,
-          published,
-          images: imagesUrls,
-          user: {
-            id: user_id,
+        location,
+        published: published ? JSON.parse(published) : undefined,
+        images: imagesUrls,
+        user,
+      });
+
+      const result = await this.publicationRepository.save(publication);
+
+      // guardar preguntas asociadas
+      const preQuestions = JSON.parse(request.body.questions);
+      const questions = preQuestions.map((question: any) => {
+        return {
+          question: question.question,
+          answer: question.answer,
+          publication: {
+            id: result.id,
           },
-        });
-        const result = await this.publicationRepository.save(publication);
-        return response.status(201).json(result);
-      } else {
-        const user_id = null;
-        const publication = this.publicationRepository.create({
-          name,
-          slug,
-          initialContent,
-          finalContent,
-          category,
-          published: published ? JSON.parse(published) : undefined,
-          images: imagesUrls,
-          user: {
-            id: user_id,
-          },
-        });
-        const result = await this.publicationRepository.save(publication);
+        };
+      });
 
-        // guardar preguntas asociadas
-        const preQuestions = JSON.parse(request.body.questions);
-        const questions = preQuestions.map((question: any) => {
-          return {
-            question: question.question,
-            answer: question.answer,
-            publication: {
-              id: result.id,
-            },
-          };
-        });
+      // insertarlos nuevamente
+      await AppDataSource.getRepository('Question').save(questions);
 
-        // insertarlos nuevamente
-        await AppDataSource.getRepository('Question').save(questions);
-
-        return response.status(201).json(result);
-      }
+      return response.status(201).json(result);
     } catch (error) {
       return response.status(400).json({
         message: 'Ha ocurrido un error creando una nueva Publicación',
@@ -217,6 +238,7 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
+          category: true,
         },
         select: {
           user: {
@@ -229,14 +251,31 @@ export class PublicationController {
           message: 'La publicación que se intenta actualizar no existe',
         });
       }
-      const { name, slug, initialContent, finalContent, category } =
-        request.body;
+      const { name, slug, initialContent, finalContent } = request.body;
       const userId = request.body.user_id
         ? Number(request.body.user_id)
         : undefined;
       const published = request.body.published
         ? JSON.parse(request.body.published)
         : undefined;
+
+      const locationParse = request.body.location
+        ? JSON.parse(request.body.location)
+        : undefined;
+
+      // TODO: corregir la función, al parecer no toma bien los valores que vienen desde el front
+      let location = null;
+      if (locationParse && locationParse.region.id !== null) {
+        location = {
+          regionId: locationParse.region.id,
+          cityId: locationParse.city?.id || null,
+        };
+      }
+
+      const category = request.body.category
+        ? JSON.parse(request.body.category)
+        : undefined;
+
       let imagesUrls: string[];
       if (request.files) {
         const imagesUploaderService = new ImagesUploader();
@@ -251,6 +290,7 @@ export class PublicationController {
         initialContent,
         finalContent,
         category,
+        location,
         images: imagesUrls,
         published,
         // user: { id: userId },
@@ -347,6 +387,58 @@ export class PublicationController {
     } catch (error) {
       return response.status(400).json({
         message: 'Ha ocurrido un error actualizando las publicaciones',
+        error: error.detail,
+      });
+    }
+  };
+  /**
+   * Obtiene todas las categorías.
+   * @param request - La solicitud HTTP que se está procesando.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns Un arreglo de objetos que representan las categorías.
+   */
+  public getAllCategories = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const categoryRepository = AppDataSource.getRepository(Category);
+      const categories = await categoryRepository.find();
+      return response.status(200).json(categories);
+    } catch (error) {
+      console.log(error);
+      return response.status(400).json({
+        message: 'Ha ocurrido un error obteniendo las categorías',
+        error: error.detail,
+      });
+    }
+  };
+
+  /**
+   * Obtiene todas las regiones y sus comunas.
+   * @param request - La solicitud HTTP que se está procesando.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns Un arreglo de objetos que representan las regiones y sus comunas.
+   */
+  public getAllRegions = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const regionRepository = AppDataSource.getRepository(Region);
+      const regions = await regionRepository.find({
+        relations: { cities: true },
+        select: { id: true, name: true },
+      });
+      return response.status(200).json(regions);
+    } catch (error) {
+      console.log(error);
+      return response.status(400).json({
+        message: 'Ha ocurrido un error obteniendo las regiones',
         error: error.detail,
       });
     }

@@ -5,3 +5,7 @@ export type JWTData = {
    iat: number;
    exp: number;
 };
+
+export interface UserConfirmationJWT {
+   userId: number;
+}

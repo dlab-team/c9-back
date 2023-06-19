@@ -5,6 +5,7 @@ import { User } from '../../entity/User';
 import { validateLogin } from './UserAuth';
 import sendEmail from '../../config/email';
 import { sign, verify } from 'jsonwebtoken';
+import { UserConfirmationJWT } from '../../types/JWTData';
 const secretKey = process.env.JWT_SECRET;
 
 export class UserController {
@@ -139,9 +140,9 @@ export class UserController {
     const { password, token } = request.body;
     try {
       //verifico token
-      const decode = verify(token, secretKey);
+      const decode = verify(token, secretKey) as UserConfirmationJWT;
       //obtengo el usuario basado en el ID del token
-      const user = await this.userRepository.findOne(decode.userId);
+      const user = await this.userRepository.findOneBy({ id: decode.userId});
       //si no existe el usuario
       if (!user) {
         return response.status(404).json({ message: 'usuario no encontrado' });

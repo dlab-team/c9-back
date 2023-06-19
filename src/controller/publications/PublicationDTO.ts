@@ -1,4 +1,11 @@
-import swagger from "../../docs/swagger";
+import swagger from '../../docs/swagger';
+import { City } from '../../entity/City';
+import { Region } from '../../entity/Region';
+
+export interface LocationFullInfo {
+  region: Region;
+  city: City;
+}
 
 /**
  * Convierte una publicación de la base de datos en un objeto DTO.
@@ -25,14 +32,26 @@ export function asDTO(response: any): { publication: any } {
     createdAt,
     user,
     questions,
+    locationFullInfo,
   } = response;
   const date = new Date(createdAt);
   const year = date.getFullYear();
   const month = date.getMonth() + 1; // Los meses en JavaScript comienzan en 0, por lo que debemos sumar 1
   const day = date.getDate();
-  const publicationDate = `${year}/${month.toString().padStart(2, "0")}/${day
+  const publicationDate = `${year}/${month.toString().padStart(2, '0')}/${day
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, '0')}`;
+
+  const location = locationFullInfo
+    ? {
+        region: {
+          id: locationFullInfo.region.id,
+          name: locationFullInfo.region.name,
+        },
+        city: locationFullInfo.city ? locationFullInfo.city : null,
+      }
+    : response.location;
+
   const publication = {
     id,
     name,
@@ -43,9 +62,8 @@ export function asDTO(response: any): { publication: any } {
     published,
     publicationDate,
     category,
-    region: "Metropolitana", // TODO: Add region to publication
-    city: "Santiago", // TODO: Add city to publication
-    author: user ? user.name : "No asignado",
+    location,
+    author: user ? user.name : 'No asignado',
     questions: questions.map(
       (question: { question: string; answer: string }) => ({
         question: question.question,
