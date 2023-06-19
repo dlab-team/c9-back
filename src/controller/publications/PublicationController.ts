@@ -5,9 +5,11 @@ import { asDTO, asDTOs, LocationFullInfo } from './PublicationDTO';
 import { ImagesUploader } from '../../services/ImagesUploader';
 import { Region } from '../../entity/Region';
 import { City } from '../../entity/City';
+import { Category } from "../../entity/Category";
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
+
   public one = async (
     request: Request,
     response: Response,
@@ -31,7 +33,7 @@ export class PublicationController {
       if (!publication) {
         return response
           .status(404)
-          .json({ message: 'La publicación que se intenta buscar no existe' });
+          .json({ message: "La publicación que se intenta buscar no existe" });
       }
 
       let locationFullInfo: LocationFullInfo = null;
@@ -51,7 +53,7 @@ export class PublicationController {
       return response.status(200).json(publicationDTO);
     } catch (error) {
       return response.status(400).json({
-        message: 'Ha ocurrido un error trayendo la publicación',
+        message: "Ha ocurrido un error trayendo la publicación",
         error: error.detail,
       });
     }
@@ -85,13 +87,16 @@ export class PublicationController {
             answer: true,
           },
         },
+        order: {
+          createdAt: "DESC",
+        },
       });
       const publicationDTOs = asDTOs(publications);
       return response.status(200).json(publicationDTOs);
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: 'Ha ocurrido un error obteniendo las Publicaciones',
+        message: "Ha ocurrido un error obteniendo las Publicaciones",
         error: error.detail,
       });
     }
@@ -124,7 +129,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: 'Ha ocurrido un error obteniendo las Publicaciones',
+        message: "Ha ocurrido un error obteniendo las Publicaciones",
         error: error.detail,
       });
     }
@@ -195,7 +200,7 @@ export class PublicationController {
       return response.status(201).json(result);
     } catch (error) {
       return response.status(400).json({
-        message: 'Ha ocurrido un error creando una nueva Publicación',
+        message: "Ha ocurrido un error creando una nueva Publicación",
         error: error.detail,
       });
     }
@@ -230,7 +235,7 @@ export class PublicationController {
       });
       if (!publication) {
         return response.status(400).json({
-          message: 'La publicación que se intenta actualizar no existe',
+          message: "La publicación que se intenta actualizar no existe",
         });
       }
       const { name, slug, initialContent, finalContent } =
@@ -280,20 +285,20 @@ export class PublicationController {
       });
 
       // eliminar anteriores
-      await AppDataSource.getRepository('Question').delete({
+      await AppDataSource.getRepository("Question").delete({
         publication: {
           id: publication.id,
         },
       });
 
       // insertarlos nuevamente
-      await AppDataSource.getRepository('Question').save(questions);
+      await AppDataSource.getRepository("Question").save(questions);
 
       return response.status(200).json(publication);
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: 'Ha ocurrido un error actualizando la Publicación',
+        message: "Ha ocurrido un error actualizando la Publicación",
         error: error.detail,
       });
     }
@@ -324,16 +329,16 @@ export class PublicationController {
       if (!publicationToRemove) {
         return response
           .status(404)
-          .json({ message: 'La publicación que se intenta borrar no existe' });
+          .json({ message: "La publicación que se intenta borrar no existe" });
       }
       await this.publicationRepository.remove(publicationToRemove);
       return response
         .status(200)
-        .json({ message: 'La Publicación se ha borrado correctamente' });
+        .json({ message: "La Publicación se ha borrado correctamente" });
     } catch (error) {
       return response.status(400).json({
         message:
-          'Ha ocurrido un error eliminando una pregunta con su respuesta',
+          "Ha ocurrido un error eliminando una pregunta con su respuesta",
         error: error.detail,
       });
     }
@@ -351,11 +356,63 @@ export class PublicationController {
         published: isPublished,
       });
       return response.status(200).json({
-        message: 'Las publicaciones se han actualizado correctamente',
+        message: "Las publicaciones se han actualizado correctamente",
       });
     } catch (error) {
       return response.status(400).json({
-        message: 'Ha ocurrido un error actualizando las publicaciones',
+        message: "Ha ocurrido un error actualizando las publicaciones",
+        error: error.detail,
+      });
+    }
+  };
+  /**
+   * Obtiene todas las categorías.
+   * @param request - La solicitud HTTP que se está procesando.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns Un arreglo de objetos que representan las categorías.
+   */
+  public getAllCategories = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const categoryRepository = AppDataSource.getRepository(Category);
+      const categories = await categoryRepository.find();
+      return response.status(200).json(categories);
+    } catch (error) {
+      console.log(error);
+      return response.status(400).json({
+        message: "Ha ocurrido un error obteniendo las categorías",
+        error: error.detail,
+      });
+    }
+  };
+
+  /**
+   * Obtiene todas las regiones y sus comunas.
+   * @param request - La solicitud HTTP que se está procesando.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns Un arreglo de objetos que representan las regiones y sus comunas.
+   */
+  public getAllRegions = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const regionRepository = AppDataSource.getRepository(Region);
+      const regions = await regionRepository.find({
+        relations: { cities: true },
+        select: { id: true, name: true },
+      });
+      return response.status(200).json(regions);
+    } catch (error) {
+      console.log(error);
+      return response.status(400).json({
+        message: "Ha ocurrido un error obteniendo las regiones",
         error: error.detail,
       });
     }
