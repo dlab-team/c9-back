@@ -116,12 +116,11 @@ publicationRouter.post(
   "/publications",
   isAuthenticated,
   validateReqSchema([
-    body("name").isString(),
-    body("slug").isString(),
-    body("initialContent").isString(),
-    body("finalContent").isString(),
-    body("category").isString(),
-    body("user_id").optional(),
+    body('name').isString(),
+    body('slug').isString(),
+    body('initialContent').isString(),
+    body('finalContent').isString(),
+    body('user_id').optional(),
   ]),
   publicationController.save
 );
@@ -140,18 +139,18 @@ publicationRouter.put(
   "/publications/:slug",
   isAuthenticated,
   validateReqSchema([
-    param("slug").isString(),
-    body("name").isString(),
-    body("initialContent").isString(),
-    body("finalContent").isString(),
-    body("category").isString(),
-    body("user_id")
+    param('slug').isString(),
+    body('name').isString(),
+    body('initialContent').isString(),
+    body('finalContent').isString(),
+    body('user_id')
       .optional()
       .isInt({ min: 1 })
       .withMessage("The minimum user_id must be positive integer"),
   ]),
   publicationController.update
 );
+
 publicationRouter.delete(
   "/publications/:slug",
   isAuthenticated,
