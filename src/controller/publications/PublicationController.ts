@@ -5,7 +5,7 @@ import { asDTO, asDTOs, LocationFullInfo } from './PublicationDTO';
 import { ImagesUploader } from '../../services/ImagesUploader';
 import { Region } from '../../entity/Region';
 import { City } from '../../entity/City';
-import { Category } from "../../entity/Category";
+import { Category } from '../../entity/Category';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -33,27 +33,36 @@ export class PublicationController {
       if (!publication) {
         return response
           .status(404)
-          .json({ message: "La publicación que se intenta buscar no existe" });
+          .json({ message: 'La publicación que se intenta buscar no existe' });
       }
 
       let locationFullInfo: LocationFullInfo = null;
       if (publication.location) {
         const region = await AppDataSource.getRepository(Region).findOneBy({
-          id: publication.location.regionId
+          id: publication.location.regionId,
         });
         const city = publication.location.cityId
           ? await AppDataSource.getRepository(City).findOneBy({
-              id: publication.location.cityId
+              id: publication.location.cityId,
             })
           : null;
         locationFullInfo = { region, city };
+      }
+
+      // TODO: Agregar imágenes dummy si es que images es vacio
+      if (publication.images.length === 0) {
+        for (let i = 0; i < 3; i++) {
+          const randomId = Math.floor(Math.random() * 1000) + 1;
+          const imageUrl = `https://picsum.photos/1200/800?random=${randomId}`;
+          publication.images.push(imageUrl);
+        }
       }
 
       const publicationDTO = asDTO({ ...publication, locationFullInfo });
       return response.status(200).json(publicationDTO);
     } catch (error) {
       return response.status(400).json({
-        message: "Ha ocurrido un error trayendo la publicación",
+        message: 'Ha ocurrido un error trayendo la publicación',
         error: error.detail,
       });
     }
@@ -88,7 +97,7 @@ export class PublicationController {
           },
         },
         order: {
-          createdAt: "DESC",
+          createdAt: 'DESC',
         },
       });
       const publicationDTOs = asDTOs(publications);
@@ -96,7 +105,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las Publicaciones",
+        message: 'Ha ocurrido un error obteniendo las Publicaciones',
         error: error.detail,
       });
     }
@@ -129,7 +138,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las Publicaciones",
+        message: 'Ha ocurrido un error obteniendo las Publicaciones',
         error: error.detail,
       });
     }
@@ -155,18 +164,22 @@ export class PublicationController {
       );
     }
     try {
-      const {
-        name,
-        slug,
-        initialContent,
-        finalContent,
-        published,
-        user_id,
-      } = request.body;
-      const locationParse = request.body.location ? JSON.parse(request.body.location): undefined
-      const location = locationParse ? { regionId: locationParse.region.id, cityId: locationParse.city?.id || null } : undefined
-      const category = request.body.category ? JSON.parse(request.body.category) : undefined
-      const user  = user_id ? { id: user_id}: { id: null }
+      const { name, slug, initialContent, finalContent, published, user_id } =
+        request.body;
+      const locationParse =
+        request.body.location && request.body.location.region.id != null
+          ? JSON.parse(request.body.location)
+          : undefined;
+      const location = locationParse
+        ? {
+            regionId: locationParse.region.id,
+            cityId: locationParse.city?.id || null,
+          }
+        : undefined;
+      const category = request.body.category
+        ? JSON.parse(request.body.category)
+        : undefined;
+      const user = user_id ? { id: user_id } : { id: null };
 
       const publication = this.publicationRepository.create({
         name,
@@ -177,7 +190,7 @@ export class PublicationController {
         location,
         published: published ? JSON.parse(published) : undefined,
         images: imagesUrls,
-        user
+        user,
       });
 
       const result = await this.publicationRepository.save(publication);
@@ -200,7 +213,7 @@ export class PublicationController {
       return response.status(201).json(result);
     } catch (error) {
       return response.status(400).json({
-        message: "Ha ocurrido un error creando una nueva Publicación",
+        message: 'Ha ocurrido un error creando una nueva Publicación',
         error: error.detail,
       });
     }
@@ -225,7 +238,7 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
-          category:true
+          category: true,
         },
         select: {
           user: {
@@ -235,20 +248,33 @@ export class PublicationController {
       });
       if (!publication) {
         return response.status(400).json({
-          message: "La publicación que se intenta actualizar no existe",
+          message: 'La publicación que se intenta actualizar no existe',
         });
       }
-      const { name, slug, initialContent, finalContent } =
-        request.body;
+      const { name, slug, initialContent, finalContent } = request.body;
       const userId = request.body.user_id
         ? Number(request.body.user_id)
         : undefined;
       const published = request.body.published
         ? JSON.parse(request.body.published)
         : undefined;
-      const locationParse = request.body.location ? JSON.parse(request.body.location): undefined
-      const location = locationParse ? { regionId: locationParse.region.id, cityId: locationParse.city?.id || null } : undefined
-      const category = request.body.category ? JSON.parse(request.body.category) : undefined
+
+      const locationParse = request.body.location
+        ? JSON.parse(request.body.location)
+        : undefined;
+
+      // TODO: corregir la función, al parecer no toma bien los valores que vienen desde el front
+      let location = null;
+      if (locationParse && locationParse.region.id !== null) {
+        location = {
+          regionId: locationParse.region.id,
+          cityId: locationParse.city?.id || null,
+        };
+      }
+
+      const category = request.body.category
+        ? JSON.parse(request.body.category)
+        : undefined;
 
       let imagesUrls: string[];
       if (request.files) {
@@ -285,20 +311,20 @@ export class PublicationController {
       });
 
       // eliminar anteriores
-      await AppDataSource.getRepository("Question").delete({
+      await AppDataSource.getRepository('Question').delete({
         publication: {
           id: publication.id,
         },
       });
 
       // insertarlos nuevamente
-      await AppDataSource.getRepository("Question").save(questions);
+      await AppDataSource.getRepository('Question').save(questions);
 
       return response.status(200).json(publication);
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error actualizando la Publicación",
+        message: 'Ha ocurrido un error actualizando la Publicación',
         error: error.detail,
       });
     }
@@ -329,16 +355,16 @@ export class PublicationController {
       if (!publicationToRemove) {
         return response
           .status(404)
-          .json({ message: "La publicación que se intenta borrar no existe" });
+          .json({ message: 'La publicación que se intenta borrar no existe' });
       }
       await this.publicationRepository.remove(publicationToRemove);
       return response
         .status(200)
-        .json({ message: "La Publicación se ha borrado correctamente" });
+        .json({ message: 'La Publicación se ha borrado correctamente' });
     } catch (error) {
       return response.status(400).json({
         message:
-          "Ha ocurrido un error eliminando una pregunta con su respuesta",
+          'Ha ocurrido un error eliminando una pregunta con su respuesta',
         error: error.detail,
       });
     }
@@ -356,11 +382,11 @@ export class PublicationController {
         published: isPublished,
       });
       return response.status(200).json({
-        message: "Las publicaciones se han actualizado correctamente",
+        message: 'Las publicaciones se han actualizado correctamente',
       });
     } catch (error) {
       return response.status(400).json({
-        message: "Ha ocurrido un error actualizando las publicaciones",
+        message: 'Ha ocurrido un error actualizando las publicaciones',
         error: error.detail,
       });
     }
@@ -384,7 +410,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las categorías",
+        message: 'Ha ocurrido un error obteniendo las categorías',
         error: error.detail,
       });
     }
@@ -412,7 +438,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las regiones",
+        message: 'Ha ocurrido un error obteniendo las regiones',
         error: error.detail,
       });
     }
