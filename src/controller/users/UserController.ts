@@ -7,6 +7,7 @@ import sendEmail from '../../config/email';
 import { sign, verify } from 'jsonwebtoken';
 import { UserConfirmationJWT } from '../../types/JWTData';
 const secretKey = process.env.JWT_SECRET;
+const crypto = require('crypto');
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
@@ -40,6 +41,12 @@ export class UserController {
       });
     }
   };
+
+  createHash(data) {
+    const hash = crypto.createHash('sha256');
+    hash.update(data);
+    return hash.digest('hex');
+  }
 
   public one = async (
     request: Request,
@@ -99,12 +106,11 @@ export class UserController {
     response: Response,
     next: NextFunction
   ) => {
-    const { firstName, lastName, age, email } = request.body;
+    const { name, email } = request.body;
     const user = Object.assign(new User(), {
-      firstName,
-      lastName,
-      age,
+      name,
       email,
+      password: this.createHash(email),
     });
     if (!user) {
       return 'you have to add firstName, email lastName and age to create an User';
@@ -121,9 +127,9 @@ export class UserController {
       await this.userRepository.save(savedUser);
       const to = savedUser.email;
       const subject = 'Confirmación de registro';
-      const content = `Hola ${savedUser.firstName}, ¡gracias por registrarte! Por favor, confirma tu cuenta haciendo click en el siguiente enlace: <a href="${confirmationUrl}">${confirmationUrl}</a>`; //envio email con el token de confirmacion
+      const content = `Hola ${savedUser.name}, ¡gracias por registrarte! Por favor, confirma tu cuenta haciendo click en el siguiente enlace: <a href="${confirmationUrl}">${confirmationUrl}</a>`; //envio email con el token de confirmacion
       await sendEmail(to, subject, content);
-      const message = `Usuario ${savedUser.firstName} registrado exitosamente`;
+      const message = `Usuario ${savedUser.email} registrado exitosamente`;
       return response.status(200).json({ user: savedUser, token, message });
     } catch (error) {
       return response.status(400).json({
@@ -142,7 +148,7 @@ export class UserController {
       //verifico token
       const decode = verify(token, secretKey) as UserConfirmationJWT;
       //obtengo el usuario basado en el ID del token
-      const user = await this.userRepository.findOneBy({ id: decode.userId});
+      const user = await this.userRepository.findOneBy({ id: decode.userId });
       //si no existe el usuario
       if (!user) {
         return response.status(404).json({ message: 'usuario no encontrado' });

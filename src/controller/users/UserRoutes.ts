@@ -122,13 +122,7 @@ userRouter.get(
 );
 userRouter.post(
   '/users',
-  validationReqSchema([
-    body('firstName').isString(),
-    body('lastName').isString(),
-    body('age')
-      .isInt({ min: 0 })
-      .withMessage('The minimum age must be positive integer'),
-  ]),
+  validationReqSchema([body('name').isString(), body('email').isString()]),
   userController.save
 );
 userRouter.post(
