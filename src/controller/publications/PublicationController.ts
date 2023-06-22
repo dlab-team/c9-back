@@ -86,6 +86,7 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
+          category: true
         },
         select: {
           user: {
@@ -122,6 +123,7 @@ export class PublicationController {
         relations: {
           user: true,
           questions: true,
+          category: true
         },
         select: {
           user: {
@@ -167,15 +169,16 @@ export class PublicationController {
       const { name, slug, initialContent, finalContent, published, user_id } =
         request.body;
       const locationParse =
-        request.body.location && request.body.location.region.id != null
+        request.body.location
           ? JSON.parse(request.body.location)
           : undefined;
-      const location = locationParse
-        ? {
-            regionId: locationParse.region.id,
-            cityId: locationParse.city?.id || null,
-          }
-        : undefined;
+
+      const location = locationParse && locationParse.region?.id !== null ? 
+        {
+          regionId: locationParse.region.id,
+          cityId: locationParse.city?.id || null,
+        } : null
+      
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
@@ -263,15 +266,11 @@ export class PublicationController {
         ? JSON.parse(request.body.location)
         : undefined;
 
-      // TODO: corregir la función, al parecer no toma bien los valores que vienen desde el front
-      let location = null;
-      if (locationParse && locationParse.region.id !== null) {
-        location = {
-          regionId: locationParse.region.id,
-          cityId: locationParse.city?.id || null,
-        };
-      }
-
+      const location = locationParse && locationParse.region?.id !== null ? 
+      {
+        regionId: locationParse.region.id,
+        cityId: locationParse.city?.id || null,
+      } : null
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
