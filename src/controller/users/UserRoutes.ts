@@ -1,9 +1,11 @@
-import { UserController } from './UserController';
-import { body, param } from 'express-validator';
-const express = require('express');
+//import * as passport from "passport";
+import { UserController } from "./UserController";
+import { body, param } from "express-validator";
+const express = require("express");
 const userRouter = express.Router();
 const userController = new UserController();
-import validationReqSchema from '../middlewares/validations';
+import validationReqSchema from "../middlewares/validations";
+import * as passport from "passport";
 
 /**
  * @swagger
@@ -114,33 +116,33 @@ import validationReqSchema from '../middlewares/validations';
  *          description: Devuelve un JWT con los datos del usuario.
  */
 
-userRouter.get('/users', userController.all);
+userRouter.get("/users", userController.all);
 userRouter.get(
-  '/users/:id',
-  validationReqSchema([param('id').isInt()]),
+  "/users/:id",
+  validationReqSchema([param("id").isInt()]),
   userController.one
 );
 userRouter.post(
-  '/users',
-  validationReqSchema([body('name').isString(), body('email').isString()]),
+  "/users",
+  validationReqSchema([body("name").isString(), body("email").isString()]),
   userController.save
 );
 userRouter.post(
-  '/users/auth',
-  validationReqSchema([body('email').isString(), body('password').isString()]),
+  "/users/auth",
+  validationReqSchema([body("email").isString(), body("password").isString()]),
   userController.checkAuth
 ),
   userRouter.post(
-    '/users/confirm',
+    "/users/confirm",
     validationReqSchema([
-      body('password').isString().withMessage('Password must be a string'),
-      body('token').isString().withMessage('Token must be a string'),
+      body("password").isString().withMessage("Password must be a string"),
+      body("token").isString().withMessage("Token must be a string"),
     ]),
     userController.confirm
   ),
   userRouter.put(
-    '/users/:id',
-    validationReqSchema([body('name').isString(), body('enabled').isBoolean()]),
+    "/users/:id",
+    validationReqSchema([body("name").isString(), body("enabled").isBoolean()]),
     userController.update
   );
 

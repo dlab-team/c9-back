@@ -10,7 +10,6 @@ import swaggerDoc from "./docs/swagger";
 import fileUpload = require("express-fileupload");
 import registerRouter from "./routes";
 
-
 function handleError(err, req, res, next) {
   res.status(err.statusCode || 500).send({ message: err.message });
 }
@@ -22,10 +21,12 @@ AppDataSource.initialize()
     app.use(cors());
     app.use(morgan("tiny"));
     app.use(bodyParser.json());
-    app.use(fileUpload({ 
-      createParentPath: true, 
-      useTempFiles: true,
-    }));
+    app.use(
+      fileUpload({
+        createParentPath: true,
+        useTempFiles: true,
+      })
+    );
     //puede no ser necesario cuando Azure este disponible
     app.use("/public/images", express.static(`public/files/images`));
 
@@ -38,7 +39,7 @@ AppDataSource.initialize()
     });
     app.use("/documentation", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
     app.use(handleError);
-    registerRouter(app)
+    registerRouter(app);
     app.listen(process.env.PORT);
 
     console.log(`Express server has started on port ${process.env.PORT}.`);
