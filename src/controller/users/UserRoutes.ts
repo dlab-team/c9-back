@@ -130,7 +130,6 @@ userRouter.post(
 );
 userRouter.post(
   '/users/auth',
-  isAdmin,
   validationReqSchema([body('email').isString(), body('password').isString()]),
   userController.checkAuth
 ),

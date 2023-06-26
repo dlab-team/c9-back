@@ -23,6 +23,7 @@ export class UserController {
           publications: true,
         },
         select: {
+          id: true,
           name: true,
           email: true,
           enabled: true,
