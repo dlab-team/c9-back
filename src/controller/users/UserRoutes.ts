@@ -122,6 +122,10 @@ userRouter.get(
   validationReqSchema([param('id').isInt()]),
   userController.one
 );
+userRouter.get(
+  '/author/:username',
+  userController.oneByUsername
+);
 userRouter.post(
   '/users',
   isAdmin,
