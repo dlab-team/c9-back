@@ -149,7 +149,7 @@ userRouter.post(
   userRouter.put(
     '/users/:id',
     isAdmin,
-    validationReqSchema([body('name').isString(), body('enabled').isBoolean()]),
+    validationReqSchema([body('name').isString().optional(), body('enabled').isBoolean().optional()]),
     userController.update
   );
 
