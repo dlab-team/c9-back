@@ -179,6 +179,7 @@ export class PublicationController {
         published,
         user_id,
         fecha_publicacion,
+        featured,
       } = request.body;
       const locationParse = request.body.location
         ? JSON.parse(request.body.location)
@@ -206,9 +207,23 @@ export class PublicationController {
         location,
         published: published ? JSON.parse(published) : undefined,
         fecha_publicacion: new Date(fecha_publicacion),
+        featured,
         images: imagesUrls,
         user,
       });
+
+      // quitar el featured anterior solo si ahora viene como true
+      if (publication.featured) {
+        const oldFeaturedPublication =
+          await this.publicationRepository.findOneBy({
+            featured: true,
+          });
+
+        if (oldFeaturedPublication) {
+          oldFeaturedPublication.featured = false;
+          await this.publicationRepository.save(oldFeaturedPublication);
+        }
+      }
 
       const result = await this.publicationRepository.save(publication);
 
@@ -268,8 +283,14 @@ export class PublicationController {
           message: 'La publicación que se intenta actualizar no existe',
         });
       }
-      const { name, slug, initialContent, finalContent, fecha_publicacion } =
-        request.body;
+      const {
+        name,
+        slug,
+        featured,
+        initialContent,
+        finalContent,
+        fecha_publicacion,
+      } = request.body;
       const userId = request.body.user_id
         ? Number(request.body.user_id)
         : undefined;
@@ -300,6 +321,19 @@ export class PublicationController {
         );
       }
 
+      // quitar el featured anterior solo si ahora viene como true
+      if (featured) {
+        const oldFeaturedPublication =
+          await this.publicationRepository.findOneBy({
+            featured: true,
+          });
+
+        if (oldFeaturedPublication) {
+          oldFeaturedPublication.featured = false;
+          await this.publicationRepository.save(oldFeaturedPublication);
+        }
+      }
+
       this.publicationRepository.merge(publication, {
         name,
         slug,
@@ -309,6 +343,7 @@ export class PublicationController {
         location,
         images: imagesUrls,
         published,
+        featured,
         fecha_publicacion: new Date(fecha_publicacion),
         // user: { id: userId },
       });
@@ -408,6 +443,37 @@ export class PublicationController {
       });
     }
   };
+
+  public addVisit = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const slug = request.params.slug;
+      const publication = await this.publicationRepository.findOne({
+        where: { slug },
+      });
+      if (!publication) {
+        return response
+          .status(404)
+          .json({ message: 'La publicación que se intenta visitar no existe' });
+      }
+
+      publication.visits += 1;
+      await this.publicationRepository.save(publication);
+
+      return response.status(200).json({
+        message: 'La publicación se ha visitado correctamente',
+      });
+    } catch (error) {
+      return response.status(400).json({
+        message: 'Ha ocurrido un error visitando la publicación',
+        error: error.detail,
+      });
+    }
+  };
+
   /**
    * Obtiene todas las categorías.
    * @param request - La solicitud HTTP que se está procesando.

@@ -1,11 +1,11 @@
-import { PublicationController } from "./PublicationController";
-import { body, param } from "express-validator";
-const express = require("express");
+import { PublicationController } from './PublicationController';
+import { body, param } from 'express-validator';
+const express = require('express');
 const publicationRouter = express.Router();
 const publicationController = new PublicationController();
-import validateReqSchema from "../middlewares/validations";
-import { isAuthenticated } from "../middlewares/isAuthenticated";
-import { isAdmin } from "../middlewares/isAdmin";
+import validateReqSchema from '../middlewares/validations';
+import { isAuthenticated } from '../middlewares/isAuthenticated';
+import { isAdmin } from '../middlewares/isAdmin';
 
 /**
  * Publicaciones
@@ -103,17 +103,17 @@ import { isAdmin } from "../middlewares/isAdmin";
  */
 
 // Validation: none
-publicationRouter.get("/publications", publicationController.allPublished);
-publicationRouter.get("/admin_publications", publicationController.all);
+publicationRouter.get('/publications', publicationController.allPublished);
+publicationRouter.get('/admin_publications', publicationController.all);
 publicationRouter.get(
-  "/publications/:slug",
-  validateReqSchema([param("slug").isString()]),
+  '/publications/:slug',
+  validateReqSchema([param('slug').isString()]),
   publicationController.one
 );
 
 // Validation: isAdmin
 publicationRouter.post(
-  "/publications",
+  '/publications',
   isAuthenticated,
   validateReqSchema([
     body('name').isString(),
@@ -125,18 +125,24 @@ publicationRouter.post(
   publicationController.save
 );
 
+publicationRouter.post(
+  '/publication/:slug/visit',
+  validateReqSchema([param('slug').isString()]),
+  publicationController.addVisit
+);
+
 publicationRouter.put(
-  "/publications/published",
+  '/publications/published',
   isAuthenticated,
   validateReqSchema([
-    body("publicationsIdsToUpdate").isArray({ min: 1 }),
-    body("isPublished").isBoolean(),
+    body('publicationsIdsToUpdate').isArray({ min: 1 }),
+    body('isPublished').isBoolean(),
   ]),
   publicationController.publishOrUnpublish
 );
 
 publicationRouter.put(
-  "/publications/:slug",
+  '/publications/:slug',
   isAuthenticated,
   validateReqSchema([
     param('slug').isString(),
@@ -146,18 +152,18 @@ publicationRouter.put(
     body('user_id')
       .optional()
       .isInt({ min: 1 })
-      .withMessage("The minimum user_id must be positive integer"),
+      .withMessage('The minimum user_id must be positive integer'),
   ]),
   publicationController.update
 );
 
 publicationRouter.delete(
-  "/publications/:slug",
+  '/publications/:slug',
   isAuthenticated,
-  validateReqSchema([param("slug").isString()]),
+  validateReqSchema([param('slug').isString()]),
   publicationController.remove
 );
-publicationRouter.get("/categories", publicationController.getAllCategories);
-publicationRouter.get("/regions", publicationController.getAllRegions);
+publicationRouter.get('/categories', publicationController.getAllCategories);
+publicationRouter.get('/regions', publicationController.getAllRegions);
 
 export default publicationRouter;
