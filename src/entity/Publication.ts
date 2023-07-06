@@ -45,6 +45,9 @@ export class Publication {
   @Column({ default: false })
   published: boolean;
 
+  @Column({ default: false })
+  featured: boolean;
+
   @ManyToOne(() => User, (user) => user.publications, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user: User;

@@ -1,11 +1,11 @@
-import { AppDataSource } from "../../data-source";
-import { NextFunction, Request, Response } from "express";
-import { Publication } from "../../entity/Publication";
-import { asDTO, asDTOs, LocationFullInfo } from "./PublicationDTO";
-import { ImagesUploader } from "../../services/ImagesUploader";
-import { Region } from "../../entity/Region";
-import { City } from "../../entity/City";
-import { Category } from "../../entity/Category";
+import { AppDataSource } from '../../data-source';
+import { NextFunction, Request, Response } from 'express';
+import { Publication } from '../../entity/Publication';
+import { asDTO, asDTOs, LocationFullInfo } from './PublicationDTO';
+import { ImagesUploader } from '../../services/ImagesUploader';
+import { Region } from '../../entity/Region';
+import { City } from '../../entity/City';
+import { Category } from '../../entity/Category';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -33,7 +33,7 @@ export class PublicationController {
       if (!publication) {
         return response
           .status(404)
-          .json({ message: "La publicación que se intenta buscar no existe" });
+          .json({ message: 'La publicación que se intenta buscar no existe' });
       }
 
       let locationFullInfo: LocationFullInfo = null;
@@ -62,7 +62,7 @@ export class PublicationController {
       return response.status(200).json(publicationDTO);
     } catch (error) {
       return response.status(400).json({
-        message: "Ha ocurrido un error trayendo la publicación",
+        message: 'Ha ocurrido un error trayendo la publicación',
         error: error.detail,
       });
     }
@@ -98,7 +98,8 @@ export class PublicationController {
           },
         },
         order: {
-          createdAt: "DESC",
+          featured: 'DESC',
+          createdAt: 'DESC',
         },
       });
       const publicationDTOs = asDTOs(publications);
@@ -106,7 +107,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las Publicaciones",
+        message: 'Ha ocurrido un error obteniendo las Publicaciones',
         error: error.detail,
       });
     }
@@ -134,13 +135,17 @@ export class PublicationController {
             answer: true,
           },
         },
+        order: {
+          featured: 'DESC',
+          createdAt: 'DESC',
+        },
       });
       const publicationDTOs = asDTOs(publications);
       return response.status(200).json(publicationDTOs);
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las Publicaciones",
+        message: 'Ha ocurrido un error obteniendo las Publicaciones',
         error: error.detail,
       });
     }
@@ -220,12 +225,12 @@ export class PublicationController {
       });
 
       // insertarlos nuevamente
-      await AppDataSource.getRepository("Question").save(questions);
+      await AppDataSource.getRepository('Question').save(questions);
 
       return response.status(201).json(result);
     } catch (error) {
       return response.status(400).json({
-        message: "Ha ocurrido un error creando una nueva Publicación",
+        message: 'Ha ocurrido un error creando una nueva Publicación',
         error: error.detail,
       });
     }
@@ -260,7 +265,7 @@ export class PublicationController {
       });
       if (!publication) {
         return response.status(400).json({
-          message: "La publicación que se intenta actualizar no existe",
+          message: 'La publicación que se intenta actualizar no existe',
         });
       }
       const { name, slug, initialContent, finalContent, fecha_publicacion } =
@@ -323,20 +328,20 @@ export class PublicationController {
       });
 
       // eliminar anteriores
-      await AppDataSource.getRepository("Question").delete({
+      await AppDataSource.getRepository('Question').delete({
         publication: {
           id: publication.id,
         },
       });
 
       // insertarlos nuevamente
-      await AppDataSource.getRepository("Question").save(questions);
+      await AppDataSource.getRepository('Question').save(questions);
 
       return response.status(200).json(publication);
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error actualizando la Publicación",
+        message: 'Ha ocurrido un error actualizando la Publicación',
         error: error.detail,
       });
     }
@@ -367,16 +372,16 @@ export class PublicationController {
       if (!publicationToRemove) {
         return response
           .status(404)
-          .json({ message: "La publicación que se intenta borrar no existe" });
+          .json({ message: 'La publicación que se intenta borrar no existe' });
       }
       await this.publicationRepository.remove(publicationToRemove);
       return response
         .status(200)
-        .json({ message: "La Publicación se ha borrado correctamente" });
+        .json({ message: 'La Publicación se ha borrado correctamente' });
     } catch (error) {
       return response.status(400).json({
         message:
-          "Ha ocurrido un error eliminando una pregunta con su respuesta",
+          'Ha ocurrido un error eliminando una pregunta con su respuesta',
         error: error.detail,
       });
     }
@@ -394,11 +399,11 @@ export class PublicationController {
         published: isPublished,
       });
       return response.status(200).json({
-        message: "Las publicaciones se han actualizado correctamente",
+        message: 'Las publicaciones se han actualizado correctamente',
       });
     } catch (error) {
       return response.status(400).json({
-        message: "Ha ocurrido un error actualizando las publicaciones",
+        message: 'Ha ocurrido un error actualizando las publicaciones',
         error: error.detail,
       });
     }
@@ -422,7 +427,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las categorías",
+        message: 'Ha ocurrido un error obteniendo las categorías',
         error: error.detail,
       });
     }
@@ -450,7 +455,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las regiones",
+        message: 'Ha ocurrido un error obteniendo las regiones',
         error: error.detail,
       });
     }
