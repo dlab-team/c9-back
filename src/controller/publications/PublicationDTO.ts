@@ -30,11 +30,12 @@ export function asDTO(response: any): { publication: any } {
     published,
     category,
     createdAt,
+    fecha_publicacion,
     user,
     questions,
     locationFullInfo,
   } = response;
-  const date = new Date(createdAt);
+  const date = new Date(fecha_publicacion ? fecha_publicacion : createdAt);
   const year = date.getFullYear();
   const month = date.getMonth() + 1; // Los meses en JavaScript comienzan en 0, por lo que debemos sumar 1
   const day = date.getDate();
