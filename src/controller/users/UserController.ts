@@ -103,22 +103,13 @@ export class UserController {
 
       // search by username, this is the substring of email, before @
       const user = await this.userRepository.findOne({
-        where: { email: ILike(`${username}@%`) },
+        where: { username: username },
         select: {
           email: true,
           name: true,
           enabled: true,
         },
       });
-
-      // const user = await this.userRepository.findOne({
-      //   where: { username },
-      //   select: {
-      //     email: true,
-      //     name: true,
-      //     enabled: true,
-      //   },
-      // });
 
       if (!user) {
         return response
@@ -127,7 +118,6 @@ export class UserController {
       }
 
       // TODO: add default value to username and description
-      user.username = user.email.split('@')[0];
       user.description = user.description =
         'Periodista apasionad@ y curiosa con una pasión por contar historias y descubrir la verdad. Con una pluma ágil y una mente inquisitiva, se dedica a investigar y reportar noticias de manera objetiva y precisa. Siempre se esfuerza por obtener diferentes perspectivas y mantener altos estándares éticos en su trabajo.\n\nSofía tiene una gran habilidad para entrevistar a personas de diversos orígenes y escuchar atentamente sus testimonios. Su empatía y sensibilidad le permiten capturar las emociones y experiencias de sus fuentes de una manera auténtica y respetuosa.\n\nComo periodista comprometida, Sofía está dispuesta a adentrarse en los temas más complejos y controvertidos de la sociedad. Le gusta investigar a fondo para desentrañar la verdad detrás de los eventos y compartir esas historias con el público, brindando una voz a aquellos que a menudo son ignorados.\n\nCon una ética sólida y un sentido de responsabilidad, Sofía se esfuerza por informar con precisión y mantener la integridad en su trabajo periodístico. Cree en el poder de los medios de comunicación para generar un cambio positivo y es consciente de la responsabilidad que conlleva su rol como informadora de la sociedad.\n\nEn resumen, Sofía es una periodista apasionada, ética y comprometida, que busca descubrir y compartir la verdad a través de su trabajo periodístico, dando voz a las personas y temas importantes de nuestra sociedad.';
 
