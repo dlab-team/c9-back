@@ -66,7 +66,9 @@ export function asDTO(response: any): { publication: any } {
     featured,
     category,
     location,
-    author: user ? user.name : 'No asignado',
+    author: user
+      ? { name: user.name, username: user.username }
+      : { name: null, username: null },
     questions: questions.map(
       (question: { question: string; answer: string }) => ({
         question: question.question,

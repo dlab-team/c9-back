@@ -27,6 +27,7 @@ export class PublicationController {
         select: {
           user: {
             name: true,
+            username: true,
           },
         },
       });
@@ -91,6 +92,7 @@ export class PublicationController {
         select: {
           user: {
             name: true,
+            username: true,
           },
           questions: {
             question: true,
@@ -129,6 +131,7 @@ export class PublicationController {
         select: {
           user: {
             name: true,
+            username: true,
           },
           questions: {
             question: true,
@@ -140,6 +143,7 @@ export class PublicationController {
           createdAt: 'DESC',
         },
       });
+
       const publicationDTOs = asDTOs(publications);
       return response.status(200).json(publicationDTOs);
     } catch (error) {
