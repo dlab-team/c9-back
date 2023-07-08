@@ -29,6 +29,9 @@ export class PublicationSeeder implements Seeder {
         user: {
           id: 1,
         },
+        author: {
+          id: 1,
+        },
       },
       {
         id: 2,
@@ -48,6 +51,9 @@ export class PublicationSeeder implements Seeder {
         published: true,
         user: {
           id: 1,
+        },
+        author: {
+          id: 2,
         },
       },
       {
@@ -69,6 +75,9 @@ export class PublicationSeeder implements Seeder {
         user: {
           id: 2,
         },
+        author: {
+          id: 3,
+        },
       },
       {
         id: 4,
@@ -88,6 +97,9 @@ export class PublicationSeeder implements Seeder {
         published: true,
         user: {
           id: 2,
+        },
+        author: {
+          id: 4,
         },
       },
       {
@@ -109,6 +121,7 @@ export class PublicationSeeder implements Seeder {
         user: {
           id: 3,
         },
+        author: {},
       },
       {
         id: 6,
@@ -128,6 +141,9 @@ export class PublicationSeeder implements Seeder {
         published: true,
         user: {
           id: 3,
+        },
+        author: {
+          id: 1,
         },
       },
       {
@@ -149,6 +165,9 @@ export class PublicationSeeder implements Seeder {
         user: {
           id: 4,
         },
+        author: {
+          id: 2,
+        },
       },
       {
         id: 8,
@@ -168,6 +187,9 @@ export class PublicationSeeder implements Seeder {
         published: true,
         user: {
           id: 4,
+        },
+        author: {
+          id: 3,
         },
       },
       {
@@ -189,6 +211,9 @@ export class PublicationSeeder implements Seeder {
         user: {
           id: 5,
         },
+        author: {
+          id: 4,
+        },
       },
       {
         id: 10,
@@ -209,6 +234,7 @@ export class PublicationSeeder implements Seeder {
         user: {
           id: 5,
         },
+        author: {},
       },
     ];
 
