@@ -9,6 +9,9 @@ export class CityController {
    public all = async (request:Request, response: Response,) => {
       try {
          const cities = await this.cityRepository.find();
+         if (!cities) {
+            return response.status(404).json({message: 'No hay ciudades'});
+         }
          return response.status(200).json(cities);
       } catch (error) {
          return response.status(500).json({ message: "Ha ocurrido un error obteniendo todas las Ciudades: ", error: error.detail });
@@ -44,6 +47,9 @@ export class CityController {
       try {
          const id = parseInt(request.params.id, 10);
          const city = await this.cityRepository.findOne({ where: { id } });
+         if (!city) {
+            return response.status(404).json({ message: "No se ha encontrado la Ciudad" });
+         }
          await this.cityRepository.remove(city);
          return response.status(200).json({message: "La Ciudad ha sido eliminada: ", city});
       } catch (error) {
@@ -55,6 +61,9 @@ export class CityController {
       try {
          const id = parseInt(request.params.id, 10);
          const city = await this.cityRepository.findOne({ where: { id } });
+         if (!city) {
+            return response.status(404).json({ message: "No se ha encontrado la Ciudad" });
+         }
          city.name = request.body.name;
          city.region = request.body.region;
          await this.cityRepository.save(city);
