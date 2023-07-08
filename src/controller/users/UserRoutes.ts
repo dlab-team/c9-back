@@ -123,7 +123,7 @@ userRouter.get(
   userController.one
 );
 userRouter.get(
-  '/author/:username',
+  '/users/:username',
   userController.oneByUsername
 );
 userRouter.post(
