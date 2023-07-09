@@ -5,22 +5,22 @@ const express = require('express');
 const cityRouter = express.Router();
 const cityController = new CityController();
 
-cityRouter.get('/city', cityController.all);
+cityRouter.get('/comunas', cityController.all);
 
-cityRouter.get('/city/:id',
+cityRouter.get('/comunas/:id',
    validateReqSchema([
       param("id").isInt()
    ]),
    cityController.one);
 
-cityRouter.post('/city',
+cityRouter.post('/comunas',
    validateReqSchema([
       body("name").isString(),
       body("region").isInt()
    ]),
    cityController.save);
 
-cityRouter.put('/city/:id',
+cityRouter.put('/comunas/:id',
    validateReqSchema([
       param("id").isInt(),
       body("name").isString(),
@@ -28,7 +28,7 @@ cityRouter.put('/city/:id',
    ]),
    cityController.update);
 
-cityRouter.delete('/city/:id',
+cityRouter.delete('/comunas/:id',
    validateReqSchema([
       param("id").isInt()
    ]),

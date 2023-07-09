@@ -10,11 +10,11 @@ export class CityController {
       try {
          const cities = await this.cityRepository.find();
          if (!cities) {
-            return response.status(404).json({message: 'No hay ciudades'});
+            return response.status(404).json({message: 'No hay comunas'});
          }
          return response.status(200).json(cities);
       } catch (error) {
-         return response.status(500).json({ message: "Ha ocurrido un error obteniendo todas las Ciudades: ", error: error.detail });
+         return response.status(500).json({ message: "Ha ocurrido un error obteniendo todas las Comunas: ", error: error.detail });
       }
    };
 
@@ -25,9 +25,9 @@ export class CityController {
          if (city) {
             return response.status(200).json(city);
          }
-         return response.status(200).json("No se ha encontrado la Ciudad");
+         return response.status(200).json("No se ha encontrado la Comuna");
       } catch (error) {
-         return response.status(500).json({ message: "Ocurrió un error obteniendo una Ciudad: ", error: error.message });
+         return response.status(500).json({ message: "Ocurrió un error obteniendo una Comuna: ", error: error.message });
       }
    };
 
@@ -39,7 +39,7 @@ export class CityController {
          await this.cityRepository.save(city);
          return response.status(201).json(city);
       } catch (error) {
-         return response.status(500).json({ message: "Ocurrió un error guardando una Ciudad: ", error: error.message });
+         return response.status(500).json({ message: "Ocurrió un error guardando una Comuna: ", error: error.message });
       }
    };
 
@@ -48,12 +48,12 @@ export class CityController {
          const id = parseInt(request.params.id, 10);
          const city = await this.cityRepository.findOne({ where: { id } });
          if (!city) {
-            return response.status(404).json({ message: "No se ha encontrado la Ciudad" });
+            return response.status(404).json({ message: "No se ha encontrado la Comuna" });
          }
          await this.cityRepository.remove(city);
-         return response.status(200).json({message: "La Ciudad ha sido eliminada: ", city});
+         return response.status(200).json({message: "La Comuna ha sido eliminada: ", city});
       } catch (error) {
-         return response.status(500).json({ message: "Ocurrió un error eliminando una Ciudad: ", error: error.message });
+         return response.status(500).json({ message: "Ocurrió un error eliminando una Comuna: ", error: error.message });
       }
    };
 
@@ -62,14 +62,14 @@ export class CityController {
          const id = parseInt(request.params.id, 10);
          const city = await this.cityRepository.findOne({ where: { id } });
          if (!city) {
-            return response.status(404).json({ message: "No se ha encontrado la Ciudad" });
+            return response.status(404).json({ message: "No se ha encontrado la Comuna" });
          }
          city.name = request.body.name;
          city.region = request.body.region;
          await this.cityRepository.save(city);
          return response.status(200).json(city);
       } catch (error) {
-         return response.status(500).json({ message: "Ocurrió un error actualizando una Ciudad: ", error: error.message });
+         return response.status(500).json({ message: "Ocurrió un error actualizando una Comuna: ", error: error.message });
       }
    };
 }
