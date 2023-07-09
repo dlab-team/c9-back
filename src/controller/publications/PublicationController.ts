@@ -19,16 +19,15 @@ export class PublicationController {
       const slug = request.params.slug;
       const publication = await this.publicationRepository.findOne({
         where: { slug },
-        relations: {
-          user: true,
-          questions: true,
-          category: true,
-        },
+        relations: ["user", "questions", "category", "author"],
         select: {
           user: {
             name: true,
             username: true,
           },
+          author: {
+            name: true,
+          }
         },
       });
       if (!publication) {
@@ -44,11 +43,16 @@ export class PublicationController {
         });
         const city = publication.location.cityId
           ? await AppDataSource.getRepository(City).findOneBy({
-              id: publication.location.cityId,
-            })
+            id: publication.location.cityId,
+          })
           : null;
         locationFullInfo = { region, city };
       }
+
+      // Add author to DTO
+      const author = publication.author;
+      console.log("PUB: ", author);
+      const publicationDTO = asDTO({ ...publication, locationFullInfo, author });
 
       // TODO: Agregar imágenes dummy si es que images es vacio
       if (publication.images.length === 0) {
@@ -59,9 +63,9 @@ export class PublicationController {
         }
       }
 
-      const publicationDTO = asDTO({ ...publication, locationFullInfo });
       return response.status(200).json(publicationDTO);
     } catch (error) {
+      console.log(error);
       return response.status(400).json({
         message: 'Ha ocurrido un error trayendo la publicación',
         error: error.detail,

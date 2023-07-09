@@ -35,6 +35,7 @@ export function asDTO(response: any): { publication: any } {
     user,
     questions,
     locationFullInfo,
+    author,
   } = response;
   const date = new Date(fecha_publicacion ? fecha_publicacion : createdAt);
   const year = date.getFullYear();
@@ -66,8 +67,8 @@ export function asDTO(response: any): { publication: any } {
     featured,
     category,
     location,
-    author: user
-      ? { name: user.name, username: user.username }
+    author: author
+      ? { name: author.name, username: author.name }
       : { name: null, username: null },
     questions: questions.map(
       (question: { question: string; answer: string }) => ({
