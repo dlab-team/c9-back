@@ -69,7 +69,7 @@ export function asDTO(response: any): { publication: any } {
     location,
     author: response.author
       ? { name: response.author.name, username: response.author.name }
-      : { name: null, username: null },
+      : { name: 'Sin Autor', username: 'Sin Autor' },
     questions: response.questions.map(
       (question: { question: string; answer: string }) => ({
         question: question.question,
