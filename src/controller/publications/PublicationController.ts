@@ -387,7 +387,8 @@ export class PublicationController {
         images: imagesUrls,
         published,
         featured,
-        fecha_publicacion: new Date(fecha_publicacion),
+        // fecha_publicacion: new Date(fecha_publicacion),
+        fecha_publicacion:  new Date(),
         // user: { id: userId },
       });
 
