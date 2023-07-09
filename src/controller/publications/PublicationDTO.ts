@@ -37,7 +37,7 @@ export function asDTO(response: any): { publication: any } {
     locationFullInfo,
     author,
   } = response;
-  const date = new Date(fecha_publicacion ? fecha_publicacion : createdAt);
+  const date = new Date(response.fecha_publicacion ? response.fecha_publicacion : response.createdAt);
   const year = date.getFullYear();
   const month = date.getMonth() + 1; // Los meses en JavaScript comienzan en 0, por lo que debemos sumar 1
   const day = date.getDate();
@@ -45,13 +45,13 @@ export function asDTO(response: any): { publication: any } {
     .toString()
     .padStart(2, '0')}`;
 
-  const location = locationFullInfo
+  const location = response.locationFullInfo
     ? {
         region: {
-          id: locationFullInfo.region.id,
-          name: locationFullInfo.region.name,
+          id: response.locationFullInfo.region.id,
+          name: response.locationFullInfo.region.name,
         },
-        city: locationFullInfo.city ? locationFullInfo.city : null,
+        city: response.locationFullInfo.city ? response.locationFullInfo.city : null,
       }
     : response.location;
 
@@ -67,10 +67,10 @@ export function asDTO(response: any): { publication: any } {
     featured,
     category,
     location,
-    author: author
-      ? { name: author.name, username: author.name }
+    author: response.author
+      ? { name: response.author.name, username: response.author.name }
       : { name: null, username: null },
-    questions: questions.map(
+    questions: response.questions.map(
       (question: { question: string; answer: string }) => ({
         question: question.question,
         answer: question.answer,

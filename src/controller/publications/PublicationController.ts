@@ -51,7 +51,6 @@ export class PublicationController {
 
       // Add author to DTO
       const author = publication.author;
-      console.log("PUB: ", author);
       const publicationDTO = asDTO({ ...publication, locationFullInfo, author });
 
       // TODO: Agregar imágenes dummy si es que images es vacio
@@ -88,15 +87,14 @@ export class PublicationController {
     try {
       const publications = await this.publicationRepository.find({
         where: { user: true || false },
-        relations: {
-          user: true,
-          questions: true,
-          category: true,
-        },
+        relations: ["user", "questions", "category", "author"],
         select: {
           user: {
             name: true,
             username: true,
+          },
+          author: {
+            name: true,
           },
           questions: {
             question: true,
@@ -104,12 +102,45 @@ export class PublicationController {
           },
         },
         order: {
-          featured: 'DESC',
-          createdAt: 'DESC',
+          featured: 'desc',
+          createdAt: 'desc',
         },
       });
-      const publicationDTOs = asDTOs(publications);
+
+      const publicationDTOs = await Promise.all(publications.map(async (publication) => {
+        let locationFullInfo: LocationFullInfo = null;
+        if (publication.location) {
+          const region = await AppDataSource.getRepository(Region).findOneBy({
+            id: publication.location.regionId,
+          });
+          const city = publication.location.cityId
+            ? await AppDataSource.getRepository(City).findOneBy({
+              id: publication.location.cityId,
+            })
+            : null;
+          locationFullInfo = { region, city };
+        }
+
+        // Add author to DTO
+        const author = publication.author;
+
+        // TODO: Agregar imágenes dummy si es que images es vacio
+        if (publication.images.length === 0) {
+          for (let i = 0; i < 3; i++) {
+            const randomId = Math.floor(Math.random() * 1000) + 1;
+            const imageUrl = `https://picsum.photos/1200/800?random=${randomId}`;
+            publication.images.push(imageUrl);
+          }
+        }
+
+        // Create a new object with all properties from publication and the updated fields
+        const updatedPublication = { ...publication, locationFullInfo, author };
+
+        return asDTO(updatedPublication);
+      }));
+
       return response.status(200).json(publicationDTOs);
+
     } catch (error) {
       console.log(error);
       return response.status(400).json({
@@ -127,11 +158,7 @@ export class PublicationController {
     try {
       const publications = await this.publicationRepository.find({
         where: { user: true || false, published: true },
-        relations: {
-          user: true,
-          questions: true,
-          category: true,
-        },
+        relations: ["user", "questions", "category", "author"],
         select: {
           user: {
             name: true,
@@ -141,10 +168,13 @@ export class PublicationController {
             question: true,
             answer: true,
           },
+          author: {
+            name: true,
+          }
         },
         order: {
-          featured: 'DESC',
-          createdAt: 'DESC',
+          featured: 'desc',
+          createdAt: 'desc',
         },
       });
 
@@ -196,9 +226,9 @@ export class PublicationController {
       const location =
         locationParse && locationParse.region?.id !== null
           ? {
-              regionId: locationParse.region.id,
-              cityId: locationParse.city?.id || null,
-            }
+            regionId: locationParse.region.id,
+            cityId: locationParse.city?.id || null,
+          }
           : null;
 
       const category = request.body.category
@@ -313,9 +343,9 @@ export class PublicationController {
       const location =
         locationParse && locationParse.region?.id !== null
           ? {
-              regionId: locationParse.region.id,
-              cityId: locationParse.city?.id || null,
-            }
+            regionId: locationParse.region.id,
+            cityId: locationParse.city?.id || null,
+          }
           : null;
       const category = request.body.category
         ? JSON.parse(request.body.category)
