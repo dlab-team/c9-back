@@ -126,6 +126,11 @@ userRouter.get(
   '/users/:username',
   userController.oneByUsername
 );
+userRouter.get(
+  '/users/email/:email',
+  // isAdmin,
+  userController.oneByEmail
+);
 userRouter.post(
   '/users',
   isAdmin,

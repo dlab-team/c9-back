@@ -215,10 +215,12 @@ export class PublicationController {
         initialContent,
         finalContent,
         published,
-        user_id,
+        user,
         fecha_publicacion,
         featured,
+        author,
       } = request.body;
+      console.log("REQUEST.BODY ", request.body);
       const locationParse = request.body.location
         ? JSON.parse(request.body.location)
         : undefined;
@@ -234,7 +236,7 @@ export class PublicationController {
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
-      const user = user_id ? { id: user_id } : { id: null };
+      const user_id = user ? { id: user.id } : { id: null };
 
       const publication = this.publicationRepository.create({
         name,
@@ -244,10 +246,12 @@ export class PublicationController {
         category,
         location,
         published: published ? JSON.parse(published) : undefined,
-        fecha_publicacion: new Date(fecha_publicacion),
+        // fecha_publicacion: new Date(fecha_publicacion),
+        fecha_publicacion: fecha_publicacion,
         featured,
-        images: imagesUrls,
+        images: imagesUrls || [],
         user,
+        author,
       });
 
       // quitar el featured anterior solo si ahora viene como true
@@ -282,6 +286,7 @@ export class PublicationController {
 
       return response.status(201).json(result);
     } catch (error) {
+      console.log("ERROR: ", error);
       return response.status(400).json({
         message: 'Ha ocurrido un error creando una nueva Publicación',
         error: error.detail,
