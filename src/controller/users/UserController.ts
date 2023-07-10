@@ -131,6 +131,42 @@ export class UserController {
     }
   };
 
+    public oneByEmail = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const email = request.params.email;
+
+      // search by email
+      const user = await this.userRepository.findOne({
+        where: { email: email },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!user) {
+        return response
+          .status(404)
+          .json({ message: 'El usuario que se intenta buscar no existe' });
+      }
+
+      // TODO: add default value to username and description
+      // user.description = user.description =
+      //   'Periodista apasionad@ y curiosa con una pasión por contar historias y descubrir la verdad. Con una pluma ágil y una mente inquisitiva, se dedica a investigar y reportar noticias de manera objetiva y precisa. Siempre se esfuerza por obtener diferentes perspectivas y mantener altos estándares éticos en su trabajo.\n\nSofía tiene una gran habilidad para entrevistar a personas de diversos orígenes y escuchar atentamente sus testimonios. Su empatía y sensibilidad le permiten capturar las emociones y experiencias de sus fuentes de una manera auténtica y respetuosa.\n\nComo periodista comprometida, Sofía está dispuesta a adentrarse en los temas más complejos y controvertidos de la sociedad. Le gusta investigar a fondo para desentrañar la verdad detrás de los eventos y compartir esas historias con el público, brindando una voz a aquellos que a menudo son ignorados.\n\nCon una ética sólida y un sentido de responsabilidad, Sofía se esfuerza por informar con precisión y mantener la integridad en su trabajo periodístico. Cree en el poder de los medios de comunicación para generar un cambio positivo y es consciente de la responsabilidad que conlleva su rol como informadora de la sociedad.\n\nEn resumen, Sofía es una periodista apasionada, ética y comprometida, que busca descubrir y compartir la verdad a través de su trabajo periodístico, dando voz a las personas y temas importantes de nuestra sociedad.';
+
+      return response.status(200).json(user);
+    } catch (error) {
+      console.log(error);
+      return response.status(400).json({
+        message: 'Ha ocurrido un error obteniendo al Usuario',
+        error: error.detail,
+      });
+    }
+  };
+
   public checkAuth = async (
     request: Request,
     response: Response,

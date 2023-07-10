@@ -10,6 +10,7 @@ import {
 import { User } from './User';
 import { Question } from './Questions';
 import { Category } from './Category';
+import { Author } from './Author';
 
 @Entity('publications')
 export class Publication {
@@ -27,6 +28,7 @@ export class Publication {
 
   @Column({ type: 'text' })
   finalContent: string;
+  
   @Column({ type: 'timestamp', nullable: true })
   fecha_publicacion: Date;
 
@@ -54,6 +56,10 @@ export class Publication {
   @ManyToOne(() => User, (user) => user.publications, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => Author, (author) => author.publications, { nullable: true })
+  @JoinColumn({ name: 'author_id' })
+  author: Author;
 
   @OneToMany(() => Question, (question) => question.publication)
   questions: Question[];

@@ -6,12 +6,15 @@ import { UserSeeder } from "./UserSeeder";
 import { CategorySeeder } from "./CategorySeeder";
 import { RegionSeeder } from "./regionSeeder";
 import { CitySeeder } from "./citySeeder";
+import { AuthorSeeder } from './AuthorSeeder';
+
 export class MainSeeder implements Seeder {
   async run(
     dataSource: DataSource,
     factoryManager: SeederFactoryManager
   ): Promise<any> {
     await runSeeder(dataSource, UserSeeder);
+    await runSeeder(dataSource, AuthorSeeder);
     await runSeeder(dataSource, CategorySeeder);
     await runSeeder(dataSource, PublicationSeeder);
     await runSeeder(dataSource, QuestionSeeder);
