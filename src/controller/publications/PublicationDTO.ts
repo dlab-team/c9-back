@@ -32,12 +32,15 @@ export function asDTO(response: any): { publication: any } {
     createdAt,
     fecha_publicacion,
     featured,
+    visits,
     user,
     questions,
     locationFullInfo,
     author,
   } = response;
-  const date = new Date(response.fecha_publicacion ? response.fecha_publicacion : response.createdAt);
+  const date = new Date(
+    response.fecha_publicacion ? response.fecha_publicacion : response.createdAt
+  );
   const year = date.getFullYear();
   const month = date.getMonth() + 1; // Los meses en JavaScript comienzan en 0, por lo que debemos sumar 1
   const day = date.getDate();
@@ -51,7 +54,9 @@ export function asDTO(response: any): { publication: any } {
           id: response.locationFullInfo.region.id,
           name: response.locationFullInfo.region.name,
         },
-        city: response.locationFullInfo.city ? response.locationFullInfo.city : null,
+        city: response.locationFullInfo.city
+          ? response.locationFullInfo.city
+          : null,
       }
     : response.location;
 
@@ -65,6 +70,7 @@ export function asDTO(response: any): { publication: any } {
     published,
     publicationDate,
     featured,
+    visits,
     category,
     location,
     author: response.author
