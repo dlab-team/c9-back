@@ -217,7 +217,6 @@ export class PublicationController {
         published,
         user,
         fecha_publicacion,
-        featured,
         author,
       } = request.body;
       console.log("REQUEST.BODY ", request.body);
@@ -237,6 +236,7 @@ export class PublicationController {
         ? JSON.parse(request.body.category)
         : undefined;
       const user_id = user ? { id: user.id } : { id: null };
+      const featured = request.body.featured ? JSON.parse(request.body.featured) : undefined
 
       const publication = this.publicationRepository.create({
         name,
@@ -329,7 +329,6 @@ export class PublicationController {
       const {
         name,
         slug,
-        featured,
         initialContent,
         finalContent,
         fecha_publicacion,
@@ -355,6 +354,7 @@ export class PublicationController {
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
+      const featured = request.body.featured ? JSON.parse(request.body.featured) : undefined
 
       let imagesUrls: string[];
       if (request.files) {
