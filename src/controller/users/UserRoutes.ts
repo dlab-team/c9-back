@@ -123,8 +123,13 @@ userRouter.get(
   userController.one
 );
 userRouter.get(
-  '/author/:username',
+  '/users/:username',
   userController.oneByUsername
+);
+userRouter.get(
+  '/users/email/:email',
+  // isAdmin,
+  userController.oneByEmail
 );
 userRouter.post(
   '/users',
@@ -149,7 +154,7 @@ userRouter.post(
   userRouter.put(
     '/users/:id',
     isAdmin,
-    validationReqSchema([body('name').isString(), body('enabled').isBoolean()]),
+    validationReqSchema([body('name').isString().optional(), body('enabled').isBoolean().optional()]),
     userController.update
   );
 

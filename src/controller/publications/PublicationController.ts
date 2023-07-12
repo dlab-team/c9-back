@@ -19,15 +19,15 @@ export class PublicationController {
       const slug = request.params.slug;
       const publication = await this.publicationRepository.findOne({
         where: { slug },
-        relations: {
-          user: true,
-          questions: true,
-          category: true,
-        },
+        relations: ["user", "questions", "category", "author"],
         select: {
           user: {
             name: true,
+            username: true,
           },
+          author: {
+            name: true,
+          }
         },
       });
       if (!publication) {
@@ -43,11 +43,15 @@ export class PublicationController {
         });
         const city = publication.location.cityId
           ? await AppDataSource.getRepository(City).findOneBy({
-              id: publication.location.cityId,
-            })
+            id: publication.location.cityId,
+          })
           : null;
         locationFullInfo = { region, city };
       }
+
+      // Add author to DTO
+      const author = publication.author;
+      const publicationDTO = asDTO({ ...publication, locationFullInfo, author });
 
       // TODO: Agregar imágenes dummy si es que images es vacio
       if (publication.images.length === 0) {
@@ -58,9 +62,9 @@ export class PublicationController {
         }
       }
 
-      const publicationDTO = asDTO({ ...publication, locationFullInfo });
       return response.status(200).json(publicationDTO);
     } catch (error) {
+      console.log(error);
       return response.status(400).json({
         message: 'Ha ocurrido un error trayendo la publicación',
         error: error.detail,
@@ -83,13 +87,13 @@ export class PublicationController {
     try {
       const publications = await this.publicationRepository.find({
         where: { user: true || false },
-        relations: {
-          user: true,
-          questions: true,
-          category: true
-        },
+        relations: ["user", "questions", "category", "author"],
         select: {
           user: {
+            name: true,
+            username: true,
+          },
+          author: {
             name: true,
           },
           questions: {
@@ -98,11 +102,45 @@ export class PublicationController {
           },
         },
         order: {
-          createdAt: 'DESC',
+          featured: 'desc',
+          createdAt: 'desc',
         },
       });
-      const publicationDTOs = asDTOs(publications);
+
+      const publicationDTOs = await Promise.all(publications.map(async (publication) => {
+        let locationFullInfo: LocationFullInfo = null;
+        if (publication.location) {
+          const region = await AppDataSource.getRepository(Region).findOneBy({
+            id: publication.location.regionId,
+          });
+          const city = publication.location.cityId
+            ? await AppDataSource.getRepository(City).findOneBy({
+              id: publication.location.cityId,
+            })
+            : null;
+          locationFullInfo = { region, city };
+        }
+
+        // Add author to DTO
+        const author = publication.author;
+
+        // TODO: Agregar imágenes dummy si es que images es vacio
+        if (publication.images.length === 0) {
+          for (let i = 0; i < 3; i++) {
+            const randomId = Math.floor(Math.random() * 1000) + 1;
+            const imageUrl = `https://picsum.photos/1200/800?random=${randomId}`;
+            publication.images.push(imageUrl);
+          }
+        }
+
+        // Create a new object with all properties from publication and the updated fields
+        const updatedPublication = { ...publication, locationFullInfo, author };
+
+        return asDTO(updatedPublication);
+      }));
+
       return response.status(200).json(publicationDTOs);
+
     } catch (error) {
       console.log(error);
       return response.status(400).json({
@@ -120,21 +158,26 @@ export class PublicationController {
     try {
       const publications = await this.publicationRepository.find({
         where: { user: true || false, published: true },
-        relations: {
-          user: true,
-          questions: true,
-          category: true
-        },
+        relations: ["user", "questions", "category", "author"],
         select: {
           user: {
             name: true,
+            username: true,
           },
           questions: {
             question: true,
             answer: true,
           },
+          author: {
+            name: true,
+          }
+        },
+        order: {
+          featured: 'desc',
+          createdAt: 'desc',
         },
       });
+
       const publicationDTOs = asDTOs(publications);
       return response.status(200).json(publicationDTOs);
     } catch (error) {
@@ -166,23 +209,34 @@ export class PublicationController {
       );
     }
     try {
-      const { name, slug, initialContent, finalContent, published, user_id } =
-        request.body;
-      const locationParse =
-        request.body.location
-          ? JSON.parse(request.body.location)
-          : undefined;
+      const {
+        name,
+        slug,
+        initialContent,
+        finalContent,
+        published,
+        user,
+        fecha_publicacion,
+        author,
+      } = request.body;
+      console.log("REQUEST.BODY ", request.body);
+      const locationParse = request.body.location
+        ? JSON.parse(request.body.location)
+        : undefined;
 
-      const location = locationParse && locationParse.region?.id !== null ? 
-        {
-          regionId: locationParse.region.id,
-          cityId: locationParse.city?.id || null,
-        } : null
-      
+      const location =
+        locationParse && locationParse.region?.id !== null
+          ? {
+            regionId: locationParse.region.id,
+            cityId: locationParse.city?.id || null,
+          }
+          : null;
+
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
-      const user = user_id ? { id: user_id } : { id: null };
+      const user_id = user ? { id: user.id } : { id: null };
+      const featured = request.body.featured ? JSON.parse(request.body.featured) : undefined
 
       const publication = this.publicationRepository.create({
         name,
@@ -192,9 +246,26 @@ export class PublicationController {
         category,
         location,
         published: published ? JSON.parse(published) : undefined,
-        images: imagesUrls,
+        // fecha_publicacion: new Date(fecha_publicacion),
+        fecha_publicacion: fecha_publicacion,
+        featured,
+        images: imagesUrls || [],
         user,
+        author,
       });
+
+      // quitar el featured anterior solo si ahora viene como true
+      if (publication.featured) {
+        const oldFeaturedPublication =
+          await this.publicationRepository.findOneBy({
+            featured: true,
+          });
+
+        if (oldFeaturedPublication) {
+          oldFeaturedPublication.featured = false;
+          await this.publicationRepository.save(oldFeaturedPublication);
+        }
+      }
 
       const result = await this.publicationRepository.save(publication);
 
@@ -215,6 +286,7 @@ export class PublicationController {
 
       return response.status(201).json(result);
     } catch (error) {
+      console.log("ERROR: ", error);
       return response.status(400).json({
         message: 'Ha ocurrido un error creando una nueva Publicación',
         error: error.detail,
@@ -254,7 +326,13 @@ export class PublicationController {
           message: 'La publicación que se intenta actualizar no existe',
         });
       }
-      const { name, slug, initialContent, finalContent } = request.body;
+      const {
+        name,
+        slug,
+        initialContent,
+        finalContent,
+        fecha_publicacion,
+      } = request.body;
       const userId = request.body.user_id
         ? Number(request.body.user_id)
         : undefined;
@@ -266,14 +344,17 @@ export class PublicationController {
         ? JSON.parse(request.body.location)
         : undefined;
 
-      const location = locationParse && locationParse.region?.id !== null ? 
-      {
-        regionId: locationParse.region.id,
-        cityId: locationParse.city?.id || null,
-      } : null
+      const location =
+        locationParse && locationParse.region?.id !== null
+          ? {
+            regionId: locationParse.region.id,
+            cityId: locationParse.city?.id || null,
+          }
+          : null;
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
+      const featured = request.body.featured ? JSON.parse(request.body.featured) : undefined
 
       let imagesUrls: string[];
       if (request.files) {
@@ -281,6 +362,19 @@ export class PublicationController {
         imagesUrls = await imagesUploaderService.uploadImages(
           request.files.images
         );
+      }
+
+      // quitar el featured anterior solo si ahora viene como true
+      if (featured) {
+        const oldFeaturedPublication =
+          await this.publicationRepository.findOneBy({
+            featured: true,
+          });
+
+        if (oldFeaturedPublication) {
+          oldFeaturedPublication.featured = false;
+          await this.publicationRepository.save(oldFeaturedPublication);
+        }
       }
 
       this.publicationRepository.merge(publication, {
@@ -292,6 +386,9 @@ export class PublicationController {
         location,
         images: imagesUrls,
         published,
+        featured,
+        // fecha_publicacion: new Date(fecha_publicacion),
+        fecha_publicacion:  new Date(),
         // user: { id: userId },
       });
 
@@ -390,6 +487,37 @@ export class PublicationController {
       });
     }
   };
+
+  public addVisit = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const slug = request.params.slug;
+      const publication = await this.publicationRepository.findOne({
+        where: { slug },
+      });
+      if (!publication) {
+        return response
+          .status(404)
+          .json({ message: 'La publicación que se intenta visitar no existe' });
+      }
+
+      publication.visits += 1;
+      await this.publicationRepository.save(publication);
+
+      return response.status(200).json({
+        message: 'La publicación se ha visitado correctamente',
+      });
+    } catch (error) {
+      return response.status(400).json({
+        message: 'Ha ocurrido un error visitando la publicación',
+        error: error.detail,
+      });
+    }
+  };
+
   /**
    * Obtiene todas las categorías.
    * @param request - La solicitud HTTP que se está procesando.

@@ -15,6 +15,12 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  username: string;
+
+  @Column({ nullable: true })
+  description: string;
+
   @Column({ default: false })
   isAdmin: boolean;
 
@@ -28,7 +34,4 @@ export class User {
     nullable: true,
   })
   publications: Publication[];
-
-  username: string;
-  description: string;
 }

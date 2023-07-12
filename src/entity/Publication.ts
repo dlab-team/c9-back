@@ -10,6 +10,7 @@ import {
 import { User } from './User';
 import { Question } from './Questions';
 import { Category } from './Category';
+import { Author } from './Author';
 
 @Entity('publications')
 export class Publication {
@@ -27,14 +28,18 @@ export class Publication {
 
   @Column({ type: 'text' })
   finalContent: string;
+  
+  @Column({ type: 'timestamp', nullable: true })
+  fecha_publicacion: Date;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Category, (category) => category.publications, { nullable: true })
+  @ManyToOne(() => Category, (category) => category.publications, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'category_id' })
-  category: Category
-
+  category: Category;
 
   @Column('simple-array', { nullable: true })
   images: string[];
@@ -42,16 +47,26 @@ export class Publication {
   @Column({ default: false })
   published: boolean;
 
+  @Column({ default: false })
+  featured: boolean;
+
+  @Column({ default: 0 })
+  visits: number;
+
   @ManyToOne(() => User, (user) => user.publications, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  @ManyToOne(() => Author, (author) => author.publications, { nullable: true })
+  @JoinColumn({ name: 'author_id' })
+  author: Author;
+
   @OneToMany(() => Question, (question) => question.publication)
   questions: Question[];
 
-  @Column({ type: 'json', nullable: true})
+  @Column({ type: 'json', nullable: true })
   location: {
-      regionId: number,
-      cityId: number | null
-  }
+    regionId: number;
+    cityId: number | null;
+  };
 }
