@@ -37,6 +37,7 @@ export function asDTO(response: any): { publication: any } {
     questions,
     locationFullInfo,
     author,
+    keywords,
   } = response;
   const date = new Date(
     response.fecha_publicacion ? response.fecha_publicacion : response.createdAt
@@ -73,6 +74,7 @@ export function asDTO(response: any): { publication: any } {
     visits,
     category,
     location,
+    keywords: keywords|| [],
     author: response.author
       ? { name: response.author.name, username: response.author.name }
       : { name: 'Sin Autor', username: 'Sin Autor' },
