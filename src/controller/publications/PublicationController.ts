@@ -130,7 +130,7 @@ export class PublicationController {
           const author = publication.author;
 
           // TODO: Agregar imágenes dummy si es que images es vacio
-          if (publication.images.length === 0) {
+          if (publication.images?.length === 0) {
             for (let i = 0; i < 3; i++) {
               const randomId = Math.floor(Math.random() * 1000) + 1;
               const imageUrl = `https://picsum.photos/1200/800?random=${randomId}`;
@@ -223,6 +223,7 @@ export class PublicationController {
         slug,
         initialContent,
         finalContent,
+        finalContent_en,
         published,
         user,
         fecha_publicacion,
@@ -254,6 +255,7 @@ export class PublicationController {
         slug,
         initialContent,
         finalContent,
+        finalContent_EN: finalContent_en,
         category,
         location,
         published: published ? JSON.parse(published) : undefined,
@@ -337,7 +339,7 @@ export class PublicationController {
           message: 'La publicación que se intenta actualizar no existe',
         });
       }
-      const { name, slug, initialContent, finalContent, fecha_publicacion } =
+      const { name, slug, initialContent, finalContent, finalContent_en, fecha_publicacion } =
         request.body;
       const userId = request.body.user_id
         ? Number(request.body.user_id)
@@ -390,6 +392,7 @@ export class PublicationController {
         slug,
         initialContent,
         finalContent,
+        finalContent_EN: finalContent_en,
         category,
         location,
         images: imagesUrls,
