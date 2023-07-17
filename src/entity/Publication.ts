@@ -28,6 +28,9 @@ export class Publication {
 
   @Column({ type: 'text' })
   finalContent: string;
+
+  @Column({ type: 'text', nullable: true, default: '' })
+  finalContent_EN: string;
   
   @Column({ type: 'timestamp', nullable: true })
   fecha_publicacion: Date;
