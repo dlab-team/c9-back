@@ -72,6 +72,7 @@ export class Publication {
     regionId: number;
     cityId: number | null;
   };
-  @Column({ type: "text", nullable: true })
-  keywords: string;
+
+  @Column('simple-array', { nullable: true })
+  keywords: string[];
 }
