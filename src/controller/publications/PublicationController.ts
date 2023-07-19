@@ -6,6 +6,7 @@ import { ImagesUploader } from '../../services/ImagesUploader';
 import { Region } from '../../entity/Region';
 import { City } from '../../entity/City';
 import { Category } from '../../entity/Category';
+import { ILike } from 'typeorm';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -26,6 +27,7 @@ export class PublicationController {
             username: true,
           },
           author: {
+            id: true,
             name: true,
           },
         },
@@ -130,7 +132,7 @@ export class PublicationController {
           const author = publication.author;
 
           // TODO: Agregar imágenes dummy si es que images es vacio
-          if (publication.images.length === 0) {
+          if (publication.images?.length === 0) {
             for (let i = 0; i < 3; i++) {
               const randomId = Math.floor(Math.random() * 1000) + 1;
               const imageUrl = `https://picsum.photos/1200/800?random=${randomId}`;
@@ -223,12 +225,14 @@ export class PublicationController {
         slug,
         initialContent,
         finalContent,
+        finalContent_en,
         published,
         user,
+        keywords,
         fecha_publicacion,
         author,
       } = request.body;
-      console.log('REQUEST.BODY ', request.body);
+
       const locationParse = request.body.location
         ? JSON.parse(request.body.location)
         : undefined;
@@ -244,25 +248,33 @@ export class PublicationController {
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
+
+      const authorParse = request.body.author
+        ? JSON.parse(request.body.author)
+        : undefined;
+
       const user_id = user ? { id: user.id } : { id: null };
       const featured = request.body.featured
         ? JSON.parse(request.body.featured)
         : undefined;
+
+      const keys = keywords ? JSON.parse(keywords) : undefined;
 
       const publication = this.publicationRepository.create({
         name,
         slug,
         initialContent,
         finalContent,
-        category,
+        finalContent_EN: finalContent_en,
+        category: category[0] || null,
         location,
         published: published ? JSON.parse(published) : undefined,
-        // fecha_publicacion: new Date(fecha_publicacion),
-        fecha_publicacion: fecha_publicacion,
+        fecha_publicacion: new Date(fecha_publicacion),
         featured,
+        keywords: keys || [],
         images: imagesUrls || [],
         user,
-        author,
+        author: authorParse || null,
       });
 
       // quitar el featured anterior solo si ahora viene como true
@@ -337,14 +349,23 @@ export class PublicationController {
           message: 'La publicación que se intenta actualizar no existe',
         });
       }
-      const { name, slug, initialContent, finalContent, fecha_publicacion } =
-        request.body;
+      const {
+        name,
+        slug,
+        initialContent,
+        finalContent,
+        finalContent_en,
+        fecha_publicacion,
+        keywords,
+      } = request.body;
       const userId = request.body.user_id
         ? Number(request.body.user_id)
         : undefined;
       const published = request.body.published
         ? JSON.parse(request.body.published)
         : undefined;
+
+      console.log('request.body: ', request.body);
 
       const locationParse = request.body.location
         ? JSON.parse(request.body.location)
@@ -357,11 +378,16 @@ export class PublicationController {
               cityId: locationParse.city?.id || null,
             }
           : null;
+
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
       const featured = request.body.featured
         ? JSON.parse(request.body.featured)
+        : undefined;
+
+      const authorParse = request.body.author
+        ? JSON.parse(request.body.author)
         : undefined;
 
       let imagesUrls: string[];
@@ -385,18 +411,22 @@ export class PublicationController {
         }
       }
 
+      const keys = keywords ? JSON.parse(keywords) : undefined;
+
       this.publicationRepository.merge(publication, {
         name,
         slug,
         initialContent,
         finalContent,
+        finalContent_EN: finalContent_en,
         category,
         location,
         images: imagesUrls,
         published,
         featured,
-        // fecha_publicacion: new Date(fecha_publicacion),
-        fecha_publicacion: new Date(),
+        fecha_publicacion: new Date(fecha_publicacion),
+        author: authorParse || null,
+        keywords: keys,
         // user: { id: userId },
       });
 
@@ -568,12 +598,62 @@ export class PublicationController {
       const regions = await regionRepository.find({
         relations: { cities: true },
         select: { id: true, name: true },
+        order: { id: 'ASC' },
       });
       return response.status(200).json(regions);
     } catch (error) {
       console.log(error);
       return response.status(400).json({
         message: 'Ha ocurrido un error obteniendo las regiones',
+        error: error.detail,
+      });
+    }
+  };
+  /**
+   * Obtiene todas las publicaciones que contengan una keyword específica en el campo keywords.
+   * @param request - La solicitud HTTP que se está procesando.
+   * @param response - La respuesta HTTP que se enviará al cliente.
+   * @param next - La función que se llamará después de que se complete la operación.
+   * @returns Un arreglo de objetos DTO que representan las publicaciones.
+   */
+  public getByKeyword = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const keyword = request.params.keyword; // Obtener la keyword de los parámetros
+
+      // Realizar la búsqueda en la base de datos para obtener las publicaciones que contengan la keyword
+      const publications = await this.publicationRepository.find({
+        where: { keywords: ILike(`%${keyword}%`) },
+        relations: ['user', 'questions', 'category', 'author'],
+        select: {
+          user: {
+            name: true,
+            username: true,
+          },
+          questions: {
+            question: true,
+            answer: true,
+          },
+          author: {
+            name: true,
+          },
+        },
+        order: {
+          featured: 'desc',
+          createdAt: 'desc',
+        },
+      });
+
+      const publicationDTOs = asDTOs(publications);
+      return response.status(200).json(publicationDTOs);
+    } catch (error) {
+      console.log(error);
+      return response.status(400).json({
+        message:
+          'Ha ocurrido un error obteniendo las Publicaciones por keyword',
         error: error.detail,
       });
     }

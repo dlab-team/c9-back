@@ -26,6 +26,7 @@ export function asDTO(response: any): { publication: any } {
     slug,
     initialContent,
     finalContent,
+    finalContent_EN,
     images,
     published,
     category,
@@ -37,6 +38,7 @@ export function asDTO(response: any): { publication: any } {
     questions,
     locationFullInfo,
     author,
+    keywords,
   } = response;
   const date = new Date(
     response.fecha_publicacion ? response.fecha_publicacion : response.createdAt
@@ -66,6 +68,7 @@ export function asDTO(response: any): { publication: any } {
     slug,
     initialContent,
     finalContent,
+    finalContent_EN,
     images: images ? images.map((image: string) => ({ url: image })) : null,
     published,
     publicationDate,
@@ -73,8 +76,13 @@ export function asDTO(response: any): { publication: any } {
     visits,
     category,
     location,
+    keywords: keywords || [],
     author: response.author
-      ? { name: response.author.name, username: response.author.name }
+      ? {
+          name: response.author.name,
+          username: response.author.name,
+          id: response.author.id,
+        }
       : { name: 'Sin Autor', username: 'Sin Autor' },
     questions: response.questions.map(
       (question: { question: string; answer: string }) => ({

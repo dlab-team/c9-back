@@ -8,7 +8,10 @@ export class RegionController {
 
   public all = async (request: Request, response: Response) => {
     try {
-      const regions = await this.regionRepository.find();
+      const regions = await this.regionRepository.find({
+        order: { id: 'ASC' },
+      });
+
       if (!regions) {
         return response.status(404).json({ message: 'No hay regiones.' });
       }
