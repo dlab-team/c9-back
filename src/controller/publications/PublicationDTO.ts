@@ -76,9 +76,13 @@ export function asDTO(response: any): { publication: any } {
     visits,
     category,
     location,
-    keywords: keywords|| [],
+    keywords: keywords || [],
     author: response.author
-      ? { name: response.author.name, username: response.author.name }
+      ? {
+          name: response.author.name,
+          username: response.author.name,
+          id: response.author.id,
+        }
       : { name: 'Sin Autor', username: 'Sin Autor' },
     questions: response.questions.map(
       (question: { question: string; answer: string }) => ({

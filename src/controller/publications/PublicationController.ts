@@ -1,12 +1,12 @@
-import { AppDataSource } from "../../data-source";
-import { NextFunction, Request, Response } from "express";
-import { Publication } from "../../entity/Publication";
-import { asDTO, asDTOs, LocationFullInfo } from "./PublicationDTO";
-import { ImagesUploader } from "../../services/ImagesUploader";
-import { Region } from "../../entity/Region";
-import { City } from "../../entity/City";
-import { Category } from "../../entity/Category";
-import { ILike } from "typeorm";
+import { AppDataSource } from '../../data-source';
+import { NextFunction, Request, Response } from 'express';
+import { Publication } from '../../entity/Publication';
+import { asDTO, asDTOs, LocationFullInfo } from './PublicationDTO';
+import { ImagesUploader } from '../../services/ImagesUploader';
+import { Region } from '../../entity/Region';
+import { City } from '../../entity/City';
+import { Category } from '../../entity/Category';
+import { ILike } from 'typeorm';
 
 export class PublicationController {
   private publicationRepository = AppDataSource.getRepository(Publication);
@@ -20,13 +20,14 @@ export class PublicationController {
       const slug = request.params.slug;
       const publication = await this.publicationRepository.findOne({
         where: { slug },
-        relations: ["user", "questions", "category", "author"],
+        relations: ['user', 'questions', 'category', 'author'],
         select: {
           user: {
             name: true,
             username: true,
           },
           author: {
+            id: true,
             name: true,
           },
         },
@@ -34,7 +35,7 @@ export class PublicationController {
       if (!publication) {
         return response
           .status(404)
-          .json({ message: "La publicación que se intenta buscar no existe" });
+          .json({ message: 'La publicación que se intenta buscar no existe' });
       }
 
       let locationFullInfo: LocationFullInfo = null;
@@ -71,7 +72,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error trayendo la publicación",
+        message: 'Ha ocurrido un error trayendo la publicación',
         error: error.detail,
       });
     }
@@ -92,7 +93,7 @@ export class PublicationController {
     try {
       const publications = await this.publicationRepository.find({
         where: { user: true || false },
-        relations: ["user", "questions", "category", "author"],
+        relations: ['user', 'questions', 'category', 'author'],
         select: {
           user: {
             name: true,
@@ -107,8 +108,8 @@ export class PublicationController {
           },
         },
         order: {
-          featured: "desc",
-          createdAt: "desc",
+          featured: 'desc',
+          createdAt: 'desc',
         },
       });
 
@@ -154,7 +155,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las Publicaciones",
+        message: 'Ha ocurrido un error obteniendo las Publicaciones',
         error: error.detail,
       });
     }
@@ -168,7 +169,7 @@ export class PublicationController {
     try {
       const publications = await this.publicationRepository.find({
         where: { user: true || false, published: true },
-        relations: ["user", "questions", "category", "author"],
+        relations: ['user', 'questions', 'category', 'author'],
         select: {
           user: {
             name: true,
@@ -183,8 +184,8 @@ export class PublicationController {
           },
         },
         order: {
-          featured: "desc",
-          createdAt: "desc",
+          featured: 'desc',
+          createdAt: 'desc',
         },
       });
 
@@ -193,7 +194,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las Publicaciones",
+        message: 'Ha ocurrido un error obteniendo las Publicaciones',
         error: error.detail,
       });
     }
@@ -227,10 +228,11 @@ export class PublicationController {
         finalContent_en,
         published,
         user,
+        keywords,
         fecha_publicacion,
         author,
       } = request.body;
-      console.log("REQUEST.BODY ", request.body);
+
       const locationParse = request.body.location
         ? JSON.parse(request.body.location)
         : undefined;
@@ -246,10 +248,17 @@ export class PublicationController {
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
+
+      const authorParse = request.body.author
+        ? JSON.parse(request.body.author)
+        : undefined;
+
       const user_id = user ? { id: user.id } : { id: null };
       const featured = request.body.featured
         ? JSON.parse(request.body.featured)
         : undefined;
+
+      const keys = keywords ? JSON.parse(keywords) : undefined;
 
       const publication = this.publicationRepository.create({
         name,
@@ -257,15 +266,15 @@ export class PublicationController {
         initialContent,
         finalContent,
         finalContent_EN: finalContent_en,
-        category,
+        category: category[0] || null,
         location,
         published: published ? JSON.parse(published) : undefined,
-        // fecha_publicacion: new Date(fecha_publicacion),
-        fecha_publicacion: fecha_publicacion,
+        fecha_publicacion: new Date(fecha_publicacion),
         featured,
+        keywords: keys || [],
         images: imagesUrls || [],
         user,
-        author,
+        author: authorParse || null,
       });
 
       // quitar el featured anterior solo si ahora viene como true
@@ -296,13 +305,13 @@ export class PublicationController {
       });
 
       // insertarlos nuevamente
-      await AppDataSource.getRepository("Question").save(questions);
+      await AppDataSource.getRepository('Question').save(questions);
 
       return response.status(201).json(result);
     } catch (error) {
-      console.log("ERROR: ", error);
+      console.log('ERROR: ', error);
       return response.status(400).json({
-        message: "Ha ocurrido un error creando una nueva Publicación",
+        message: 'Ha ocurrido un error creando una nueva Publicación',
         error: error.detail,
       });
     }
@@ -337,7 +346,7 @@ export class PublicationController {
       });
       if (!publication) {
         return response.status(400).json({
-          message: "La publicación que se intenta actualizar no existe",
+          message: 'La publicación que se intenta actualizar no existe',
         });
       }
       const {
@@ -347,6 +356,7 @@ export class PublicationController {
         finalContent,
         finalContent_en,
         fecha_publicacion,
+        keywords,
       } = request.body;
       const userId = request.body.user_id
         ? Number(request.body.user_id)
@@ -354,6 +364,8 @@ export class PublicationController {
       const published = request.body.published
         ? JSON.parse(request.body.published)
         : undefined;
+
+      console.log('request.body: ', request.body);
 
       const locationParse = request.body.location
         ? JSON.parse(request.body.location)
@@ -366,11 +378,16 @@ export class PublicationController {
               cityId: locationParse.city?.id || null,
             }
           : null;
+
       const category = request.body.category
         ? JSON.parse(request.body.category)
         : undefined;
       const featured = request.body.featured
         ? JSON.parse(request.body.featured)
+        : undefined;
+
+      const authorParse = request.body.author
+        ? JSON.parse(request.body.author)
         : undefined;
 
       let imagesUrls: string[];
@@ -394,6 +411,8 @@ export class PublicationController {
         }
       }
 
+      const keys = keywords ? JSON.parse(keywords) : undefined;
+
       this.publicationRepository.merge(publication, {
         name,
         slug,
@@ -405,8 +424,9 @@ export class PublicationController {
         images: imagesUrls,
         published,
         featured,
-        // fecha_publicacion: new Date(fecha_publicacion),
-        fecha_publicacion: new Date(),
+        fecha_publicacion: new Date(fecha_publicacion),
+        author: authorParse || null,
+        keywords: keys,
         // user: { id: userId },
       });
 
@@ -425,20 +445,20 @@ export class PublicationController {
       });
 
       // eliminar anteriores
-      await AppDataSource.getRepository("Question").delete({
+      await AppDataSource.getRepository('Question').delete({
         publication: {
           id: publication.id,
         },
       });
 
       // insertarlos nuevamente
-      await AppDataSource.getRepository("Question").save(questions);
+      await AppDataSource.getRepository('Question').save(questions);
 
       return response.status(200).json(publication);
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error actualizando la Publicación",
+        message: 'Ha ocurrido un error actualizando la Publicación',
         error: error.detail,
       });
     }
@@ -469,16 +489,16 @@ export class PublicationController {
       if (!publicationToRemove) {
         return response
           .status(404)
-          .json({ message: "La publicación que se intenta borrar no existe" });
+          .json({ message: 'La publicación que se intenta borrar no existe' });
       }
       await this.publicationRepository.remove(publicationToRemove);
       return response
         .status(200)
-        .json({ message: "La Publicación se ha borrado correctamente" });
+        .json({ message: 'La Publicación se ha borrado correctamente' });
     } catch (error) {
       return response.status(400).json({
         message:
-          "Ha ocurrido un error eliminando una pregunta con su respuesta",
+          'Ha ocurrido un error eliminando una pregunta con su respuesta',
         error: error.detail,
       });
     }
@@ -496,11 +516,11 @@ export class PublicationController {
         published: isPublished,
       });
       return response.status(200).json({
-        message: "Las publicaciones se han actualizado correctamente",
+        message: 'Las publicaciones se han actualizado correctamente',
       });
     } catch (error) {
       return response.status(400).json({
-        message: "Ha ocurrido un error actualizando las publicaciones",
+        message: 'Ha ocurrido un error actualizando las publicaciones',
         error: error.detail,
       });
     }
@@ -519,18 +539,18 @@ export class PublicationController {
       if (!publication) {
         return response
           .status(404)
-          .json({ message: "La publicación que se intenta visitar no existe" });
+          .json({ message: 'La publicación que se intenta visitar no existe' });
       }
 
       publication.visits += 1;
       await this.publicationRepository.save(publication);
 
       return response.status(200).json({
-        message: "La publicación se ha visitado correctamente",
+        message: 'La publicación se ha visitado correctamente',
       });
     } catch (error) {
       return response.status(400).json({
-        message: "Ha ocurrido un error visitando la publicación",
+        message: 'Ha ocurrido un error visitando la publicación',
         error: error.detail,
       });
     }
@@ -555,7 +575,7 @@ export class PublicationController {
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las categorías",
+        message: 'Ha ocurrido un error obteniendo las categorías',
         error: error.detail,
       });
     }
@@ -578,12 +598,13 @@ export class PublicationController {
       const regions = await regionRepository.find({
         relations: { cities: true },
         select: { id: true, name: true },
+        order: { id: 'ASC' },
       });
       return response.status(200).json(regions);
     } catch (error) {
       console.log(error);
       return response.status(400).json({
-        message: "Ha ocurrido un error obteniendo las regiones",
+        message: 'Ha ocurrido un error obteniendo las regiones',
         error: error.detail,
       });
     }
@@ -606,7 +627,7 @@ export class PublicationController {
       // Realizar la búsqueda en la base de datos para obtener las publicaciones que contengan la keyword
       const publications = await this.publicationRepository.find({
         where: { keywords: ILike(`%${keyword}%`) },
-        relations: ["user", "questions", "category", "author"],
+        relations: ['user', 'questions', 'category', 'author'],
         select: {
           user: {
             name: true,
@@ -621,8 +642,8 @@ export class PublicationController {
           },
         },
         order: {
-          featured: "desc",
-          createdAt: "desc",
+          featured: 'desc',
+          createdAt: 'desc',
         },
       });
 
@@ -632,7 +653,7 @@ export class PublicationController {
       console.log(error);
       return response.status(400).json({
         message:
-          "Ha ocurrido un error obteniendo las Publicaciones por keyword",
+          'Ha ocurrido un error obteniendo las Publicaciones por keyword',
         error: error.detail,
       });
     }
