@@ -6,6 +6,8 @@ const userController = new UserController();
 import validationReqSchema from '../middlewares/validations';
 import { isAdmin } from '../middlewares/isAdmin';
 
+import passport from '../../config/passport';
+
 /**
  * @swagger
  * path:
@@ -122,10 +124,7 @@ userRouter.get(
   validationReqSchema([param('id').isInt()]),
   userController.one
 );
-userRouter.get(
-  '/users/:username',
-  userController.oneByUsername
-);
+userRouter.get('/users/:username', userController.oneByUsername);
 userRouter.get(
   '/users/email/:email',
   // isAdmin,
@@ -154,8 +153,23 @@ userRouter.post(
   userRouter.put(
     '/users/:id',
     isAdmin,
-    validationReqSchema([body('name').isString().optional(), body('enabled').isBoolean().optional()]),
+    validationReqSchema([
+      body('name').isString().optional(),
+      body('enabled').isBoolean().optional(),
+    ]),
     userController.update
   );
+
+// linkedin
+userRouter.get('/auth/linkedin', passport.authenticate('linkedin'));
+
+userRouter.get(
+  '/auth/linkedin/callback',
+  passport.authenticate('linkedin', { failureRedirect: '/' }),
+  function (req, res) {
+    // el campo req.user contiene el token res.send(req.user);
+    res.redirect(`${process.env.FRONT_URL}/loginLinkedin/${req.user}`);
+  }
+);
 
 export default userRouter;
