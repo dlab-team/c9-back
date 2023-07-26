@@ -109,7 +109,7 @@ export class PublicationController {
         },
         order: {
           featured: 'desc',
-          createdAt: 'desc',
+          fecha_publicacion: 'desc',
         },
       });
 
@@ -185,7 +185,7 @@ export class PublicationController {
         },
         order: {
           featured: 'desc',
-          createdAt: 'desc',
+          fecha_publicacion: 'desc',
         },
       });
 
@@ -364,8 +364,6 @@ export class PublicationController {
       const published = request.body.published
         ? JSON.parse(request.body.published)
         : undefined;
-
-      console.log('request.body: ', request.body);
 
       const locationParse = request.body.location
         ? JSON.parse(request.body.location)
@@ -643,7 +641,7 @@ export class PublicationController {
         },
         order: {
           featured: 'desc',
-          createdAt: 'desc',
+          fecha_publicacion: 'desc',
         },
       });
 
