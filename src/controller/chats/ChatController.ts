@@ -29,8 +29,6 @@ export class ChatController {
       const messagesPrompt = generateMessagesForPrompt(publicationContent);
       let totalMessages = messagesPrompt.concat(messages || []);
       totalMessages.push(newMessage);
-      console.log('newMessage: ', newMessage);
-      console.log('totalMessages: ', totalMessages);
       const chatCompletion = await openai.chat.completions.create({
         messages: totalMessages,
         model: 'gpt-3.5-turbo'
