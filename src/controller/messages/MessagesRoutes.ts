@@ -7,7 +7,6 @@ const messageController = new MessagesController();
 
 messageRouter.post('/api/chat_message',
    validateReqSchema([
-      body("username").isString(),
       body("message").isString(),
       body("publication_slug").isString(),
    ]),

@@ -4,6 +4,10 @@ import { Chat } from '../../entity/Chat';
 import { Messages } from '../../entity/Messages';
 import { Publication } from '../../entity/Publication';
 import { User } from '../../entity/User';
+import jwt = require('jsonwebtoken');
+import { JWTData } from '../../types/JWTData';
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export class MessagesController {
 	private chatRepository = AppDataSource.getRepository(Chat);
@@ -13,8 +17,18 @@ export class MessagesController {
 
 	public save = async (request: Request, response: Response) => {
 		try {
-			const { username, message, publication_slug } = request.body;
+			const authHeader = request.header('Authorization');
+			const token = authHeader && authHeader.split(' ')[1];
+			if (!token) {
+				return response
+					.status(401)
+					.json({ message: 'No token, authorization denied' });
+			}
+			const decoded = jwt.verify(token, JWT_SECRET) as JWTData;
 
+			const { message, publication_slug } = request.body;
+			
+			const username = decoded.username;
 			const user = await this.userRepository.findOne({
 				where: { name: username },
 			});
