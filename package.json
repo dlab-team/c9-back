@@ -29,6 +29,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
+    "cloudinary": "^1.39.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.17.2",
@@ -42,6 +43,7 @@
     "node-fetch": "2.6.7",
     "nodemailer": "^6.9.3",
     "nodemon": "^2.0.22",
+    "openai": "^4.3.1",
     "passport": "^0.6.0",
     "passport-linkedin-oauth2": "^2.0.0",
     "path": "^0.12.7",
